@@ -134,22 +134,29 @@ public class PlayerSC implements SubCommandExecutor {
 				messages.add(ConfigOptions.description + "Offline " + joinLeaveTime);
 			if (sender.hasPermission("pseudoplayers.view.playtime")) {
 				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime");
+				long playtime = 0;
 				if (playtimeO instanceof BigInteger || playtimeO instanceof Long) {
-					long playtime = 0;
 					if (playtimeO instanceof BigInteger)
 						playtime = ((BigInteger) playtimeO).longValueExact();
 					else
 						playtime = (Long) playtimeO;
-					if (online) {
-						Object o = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave");
-						if (o instanceof Timestamp) {
-							long joinLeave = ((Timestamp) o).getTime();
-							long diff = System.currentTimeMillis() - joinLeave;
-							playtime += diff;
-						}
-					}
-					messages.add(ConfigOptions.description + "Playtime: " + ConfigOptions.command + Utils.millisToHumanFormat(playtime));
 				}
+				if (online) {
+					Object o = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave");
+					Timestamp joinLeaveTS = null;
+					if (o instanceof Timestamp) {
+						joinLeaveTS = (Timestamp) o;
+					}
+					if (o instanceof Date) {
+						joinLeaveTS = new Timestamp(((Date) o).getTime());
+					}
+					if (joinLeaveTS != null) {
+						long joinLeave = joinLeaveTS.getTime();
+						long diff = System.currentTimeMillis() - joinLeave;
+						playtime += diff;
+					}
+				}
+				messages.add(ConfigOptions.description + "Playtime: " + ConfigOptions.command + Utils.millisToHumanFormat(playtime));
 			}
 			if (online) {
 				if (sender.hasPermission("pseudoplayers.view.location")) {
@@ -255,11 +262,14 @@ public class PlayerSC implements SubCommandExecutor {
 				else
 					messages.add(ConfigOptions.description + "OP: " + ConfigOptions.command + "False");
 			}
-			if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled() && online) {
-				if (sender.hasPermission("pseudoplayers.view.god")) {
-					Object godO = PlayerDataController.getPlayerSetting(uuid, "godMode");
-					if (godO instanceof Boolean) {
-						boolean god = (Boolean) godO;
+			if (Bukkit.getPluginManager().getPlugin("PseudoUtils") != null) {
+				if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled() && online) {
+					if (sender.hasPermission("pseudoplayers.view.god")) {
+						Object godO = PlayerDataController.getPlayerSetting(uuid, "godMode");
+						boolean god = false;
+						if (godO instanceof Boolean) {
+							god = (Boolean) godO;
+						}
 						if (god)
 							messages.add(ConfigOptions.description + "God Mode: " + ConfigOptions.command + "Enabled");
 						else
@@ -269,8 +279,8 @@ public class PlayerSC implements SubCommandExecutor {
 			}
 			if (sender.hasPermission("pseudoplayers.view.fly") && online) {
 				boolean fly = Bukkit.getServer().getPlayer(name).getAllowFlight();
-				boolean isFly = Bukkit.getServer().getPlayer(name).isFlying();
 				if (fly) {
+					boolean isFly = Bukkit.getServer().getPlayer(name).isFlying();
 					if (isFly)
 						messages.add(ConfigOptions.description + "Fly Mode: " + ConfigOptions.command + "Enabled (Flying)");
 					else

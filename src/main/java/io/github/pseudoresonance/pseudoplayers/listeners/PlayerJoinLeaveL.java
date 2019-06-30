@@ -16,7 +16,7 @@ public class PlayerJoinLeaveL implements Listener {
 
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent e) {
-		PlayerDataController.setPlayerSetting(e.getPlayer().getUniqueId().toString(), "ip", e.getRealAddress().getHostAddress());
+		PlayerDataController.setPlayerSetting(e.getPlayer().getUniqueId().toString(), "ip", e.getAddress().getHostAddress());
 	}
 
 	@EventHandler
