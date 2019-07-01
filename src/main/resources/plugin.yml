@@ -1,7 +1,7 @@
 name: PseudoPlayers
 author: PseudoResonance
 main: io.github.pseudoresonance.pseudoplayers.PseudoPlayers
-version: 1.1
+version: 1.1.1
 description: Stores and gets data about players
 api-version: 1.13
 depend: [PseudoAPI]

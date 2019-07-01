@@ -162,11 +162,12 @@ public class PlayerSC implements SubCommandExecutor {
 				if (sender.hasPermission("pseudoplayers.view.location")) {
 					Location loc = Bukkit.getServer().getPlayer(name).getLocation();
 					String world = loc.getWorld().getName();
+					String worldId = loc.getWorld().getUID().toString();
 					String x = String.valueOf(loc.getBlockX());
 					String y = String.valueOf(loc.getBlockY());
 					String z = String.valueOf(loc.getBlockZ());
 					String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
-					tpCommand = tpCommand.replaceAll("\\{world\\}", world);
+					tpCommand = tpCommand.replaceAll("\\{world\\}", worldId);
 					tpCommand = tpCommand.replaceAll("\\{x\\}", x);
 					tpCommand = tpCommand.replaceAll("\\{y\\}", y);
 					tpCommand = tpCommand.replaceAll("\\{z\\}", z);
@@ -181,11 +182,12 @@ public class PlayerSC implements SubCommandExecutor {
 							String[] split = s.split(",");
 							if (split.length >= 4) {
 								String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
+								String worldName = PseudoPlayers.plugin.getServer().getWorld(UUID.fromString(split[0])).getName();
 								tpCommand = tpCommand.replaceAll("\\{world\\}", split[0]);
 								tpCommand = tpCommand.replaceAll("\\{x\\}", split[1]);
 								tpCommand = tpCommand.replaceAll("\\{y\\}", split[2]);
 								tpCommand = tpCommand.replaceAll("\\{z\\}", split[3]);
-								messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Logout Location: "), new ChatElement(ConfigOptions.command + "World: " + split[0] + " X: " + split[1] + " Y: " + split[2] + " Z: " + split[3], new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
+								messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Logout Location: "), new ChatElement(ConfigOptions.command + "World: " + worldName + " X: " + split[1] + " Y: " + split[2] + " Z: " + split[3], new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
 							}
 						}
 					}

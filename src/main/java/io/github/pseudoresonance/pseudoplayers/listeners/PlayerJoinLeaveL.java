@@ -24,7 +24,7 @@ public class PlayerJoinLeaveL implements Listener {
 		HashMap<String, Object> settings = new HashMap<String, Object>();
 		Player p = e.getPlayer();
 		Location l = p.getLocation();
-		String location = l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+		String location = l.getWorld().getUID().toString() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
 		UUID u = p.getUniqueId();
 		String uuid = u.toString();
 		settings.put("logoutLocation", location);
