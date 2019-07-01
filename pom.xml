@@ -76,7 +76,7 @@
 			<version>1.14.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>io.github.PseudoResonance</groupId>
+			<groupId>com.github.PseudoResonance</groupId>
 			<artifactId>PseudoAPI</artifactId>
 			<version>-SNAPSHOT</version>
 		</dependency>
