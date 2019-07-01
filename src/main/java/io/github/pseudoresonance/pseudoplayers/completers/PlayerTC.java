@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 
@@ -16,6 +17,8 @@ public class PlayerTC implements TabCompleter {
 		if (args.length == 1) {
 			if (sender.hasPermission("pseudoplayers.view.others")) {
 				possible.addAll(PlayerDataController.getNames());
+			} else if (sender instanceof Player) {
+				possible.add(((Player) sender).getName());
 			}
 			if (args[0].equalsIgnoreCase("")) {
 				return possible;
