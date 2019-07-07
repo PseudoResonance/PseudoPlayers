@@ -27,11 +27,12 @@ public class PingSC implements SubCommandExecutor {
 			if (args.length == 0) {
 				if (sender instanceof Player) {
 					try {
+						Player p = (Player) sender;
 						if (craftPlayerClass == null)
 							craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + Utils.getBukkitVersion() + ".entity.CraftPlayer");
 						if (entityPlayerClass == null)
 							entityPlayerClass = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".EntityPlayer");
-						Object craftPlayer = craftPlayerClass.cast(sender);
+						Object craftPlayer = craftPlayerClass.cast(p);
 						if (handleMethod == null)
 							handleMethod = craftPlayerClass.getMethod("getHandle");
 						Object entityPlayer = handleMethod.invoke(craftPlayer);
