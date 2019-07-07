@@ -1,7 +1,7 @@
-name: PseudoPlayers
+name: ${project.artifactId}
 author: PseudoResonance
 main: io.github.pseudoresonance.pseudoplayers.PseudoPlayers
-version: 1.1.1
+version: ${version}
 description: Stores and gets data about players
 api-version: 1.13
 depend: [PseudoAPI]
@@ -12,6 +12,9 @@ commands:
   player:
     description: Shows player information
     aliases: [p,seen,lastseen,whois]
+  ping:
+    description: Shows player ping
+    permission: pseudoplayers.ping
 permissions:
   pseudoplayers.reset:
     description: Allows the player to reset the config
@@ -19,6 +22,14 @@ permissions:
   pseudoplayers.reload:
     description: Allows the player to reload the plugin
     default: op
+  pseudoplayers.ping:
+    description: Allows the player to view their ping
+    default: true
+  pseudoplayers.ping.others:
+    description: Allows the player to view the ping of other players
+    default: op
+    children:
+      pseudoplayers.ping: true
   pseudoplayers.view:
     description: Allows the player to view player information about themselves
     default: true
@@ -33,13 +44,23 @@ permissions:
     children:
       pseudoplayers.view: true
   pseudoplayers.view.location:
-    description: Allows the player to see where a player last logged off
+    description: Allows the player to see where a player is
     default: op
     children:
       pseudoplayers.view: true
   pseudoplayers.view.logoutlocation:
     description: Allows the player to see where a player last logged off
     default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.server:
+    description: Allows the player to see what server a player is on
+    default: true
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.lastserver:
+    description: Allows the player to see what server a player was last on
+    default: true
     children:
       pseudoplayers.view: true
   pseudoplayers.view.playtime:
@@ -93,10 +114,13 @@ permissions:
     children:
       pseudoplayers.reset: true
       pseudoplayers.reload: true
+      pseudoplayers.ping.others: true
       pseudoplayers.view.others: true
       pseudoplayers.view.uuid: true
       pseudoplayers.view.location: true
       pseudoplayers.view.logoutlocation: true
+      pseudoplayers.view.server: true
+      pseudoplayers.view.lastserver: true
       pseudoplayers.view.playtime: true
       pseudoplayers.view.balance: true
       pseudoplayers.view.ip: true

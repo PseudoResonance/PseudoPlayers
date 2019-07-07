@@ -21,6 +21,9 @@ public class PseudoPlayersTC implements TabCompleter {
 			if (sender.hasPermission("pseudoplayers.reset")) {
 				possible.add("reset");
 			}
+			if (sender.hasPermission("pseudoplayers.ping")) {
+				possible.add("ping");
+			}
 			if (sender.hasPermission("pseudoplayers.view")) {
 				possible.add("player");
 			}

@@ -1,44 +1,42 @@
-######################
-#PseudoPlayers Config#
-######################
+########################
+# PseudoPlayers Config #
+########################
 
-#DO NOT CHANGE THIS LINE! YOUR CONFIG WILL BE RESET UPON LOADING IF THIS LINE IS EDITED!
+# DO NOT CHANGE THIS LINE! YOUR CONFIG WILL BE RESET UPON LOADING IF THIS LINE IS EDITED!
 Version: 3
 
 
-#########
-#Formats#
-#########
+###########
+# Formats #
+###########
 
-#Time format of first join if greater than difference specified below
-#Use following codes:
-#https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+# Time format of first join if greater than difference specified below
+# Use following codes:
+# https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 FirstJoinTimeFormat: "MM-dd-yy h:mm:ss a"
 
-#Difference between now and first join time that switches from a relative to absolute format
-#In days
+# Difference between now and first join time that switches from a relative to absolute format (in days)
 FirstJoinTimeDifference: 7
 
-#Time format of last join/leave if greater than difference specified below
-#Use following codes:
-#https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+# Time format of last join/leave if greater than difference specified below
+# Use following codes:
+# https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 JoinLeaveTimeFormat: "MM-dd-yy h:mm:ss a"
 
-#Difference between now and last join/leave time that switches from a relative to absolute format
-#In days
+# Difference between now and last join/leave time that switches from a relative to absolute format (in days)
 JoinLeaveTimeDifference: 30
 
-#Teleportation Format
-#{world} = world name
-#{x} = x coordinate
-#{y} = y coordinate
-#{z} = z coordinate
+# Teleportation Format
+# {world} = world name
+# {x} = x coordinate
+# {y} = y coordinate
+# {z} = z coordinate
 TeleportationFormat: "tp @p {x} {y} {z}"
 
 
-#######
-#Other#
-#######
+#########
+# Other #
+#########
 
-#Aggressively take over /p command
+# Aggressively take over /p command
 AggressiveCommands: false
