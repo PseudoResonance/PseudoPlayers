@@ -92,9 +92,9 @@ public class PlayerSC implements SubCommandExecutor {
 			}
 			List<Object> messages = new ArrayList<Object>();
 			if (nickname != "")
-				messages.add(Config.borderColor + "===---" + Config.titleColor + nickname + Config.titleColor + " Details" + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + nickname + Config.titleColor + "'s Details" + Config.borderColor + "---===");
 			else
-				messages.add(Config.borderColor + "===---" + Config.titleColor + name + " Details" + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + name + "'s Details" + Config.borderColor + "---===");
 			if (sender.hasPermission("pseudoplayers.view.uuid"))
 				messages.add(Config.descriptionColor + "UUID: " + Config.commandColor + uuid);
 			if (sender.hasPermission("pseudoplayers.view.username"))
