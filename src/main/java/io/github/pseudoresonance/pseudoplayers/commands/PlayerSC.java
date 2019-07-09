@@ -46,6 +46,7 @@ public class PlayerSC implements SubCommandExecutor {
 			boolean online = false;
 			String uuid;
 			String name;
+			String nickname;
 			if (args.length == 0) {
 				if (sender instanceof Player) {
 					uuid = ((Player) sender).getUniqueId().toString();
@@ -59,7 +60,7 @@ public class PlayerSC implements SubCommandExecutor {
 				if (pUuid != null) {
 					name = PlayerDataController.getName(pUuid);
 					if (sender instanceof Player) {
-						if (((Player) sender).getName().equalsIgnoreCase(name))
+						if (((Player) sender).getUniqueId().toString().equalsIgnoreCase(pUuid))
 							uuid = pUuid;
 						else {
 							if (sender.hasPermission("pseudoplayers.view.others"))
@@ -77,12 +78,27 @@ public class PlayerSC implements SubCommandExecutor {
 					return false;
 				}
 			}
-			if (Bukkit.getServer().getPlayer(name) != null)
+			Player player = Bukkit.getServer().getPlayer(name);
+			if (player != null) {
 				online = true;
+				nickname = player.getDisplayName();
+			} else {
+				Object nicknameO = PlayerDataController.getPlayerSetting(uuid, "nickname");
+				if (nicknameO instanceof String) {
+					nickname = (String) nicknameO;
+				} else {
+					nickname = "";
+				}
+			}
 			List<Object> messages = new ArrayList<Object>();
-			messages.add(Config.borderColor + "===---" + Config.titleColor + name + " Details" + Config.borderColor + "---===");
+			if (nickname != "")
+				messages.add(Config.borderColor + "===---" + Config.titleColor + nickname + Config.titleColor + " Details" + Config.borderColor + "---===");
+			else
+				messages.add(Config.borderColor + "===---" + Config.titleColor + name + " Details" + Config.borderColor + "---===");
 			if (sender.hasPermission("pseudoplayers.view.uuid"))
 				messages.add(Config.descriptionColor + "UUID: " + Config.commandColor + uuid);
+			if (sender.hasPermission("pseudoplayers.view.username"))
+				messages.add(Config.descriptionColor + "Username: " + Config.commandColor + name);
 			boolean onlineNetwork = false;
 			if (online)
 				onlineNetwork = true;

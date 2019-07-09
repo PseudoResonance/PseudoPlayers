@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
+import io.github.pseudoresonance.pseudoapi.bukkit.Config;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
 
@@ -66,11 +67,11 @@ public class PingSC implements SubCommandExecutor {
 							if (pingField == null)
 								pingField = entityPlayerClass.getField("ping");
 							int ping = pingField.getInt(entityPlayer);
-							PseudoAPI.message.sendPluginMessage(sender, p.getName() + "'s Ping: " + ping + "ms");
+							PseudoAPI.message.sendPluginMessage(sender, p.getDisplayName() + Config.textColor + "'s Ping: " + ping + "ms");
 							return true;
 						} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
 							e.printStackTrace();
-							PseudoAPI.message.sendPluginError(sender, Errors.CUSTOM, "There was an error while getting " + p.getName() + "'s ping! Please contact an administrator!");
+							PseudoAPI.message.sendPluginError(sender, Errors.CUSTOM, "There was an error while getting " + p.getDisplayName() + Config.textColor + "'s ping! Please contact an administrator!");
 							return false;
 						}
 					} else {

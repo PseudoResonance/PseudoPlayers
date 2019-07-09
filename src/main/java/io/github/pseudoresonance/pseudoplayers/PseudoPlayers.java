@@ -12,11 +12,14 @@ import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoUpdater;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
+import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
 import io.github.pseudoresonance.pseudoplayers.commands.ReloadSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ResetSC;
+import io.github.pseudoresonance.pseudoplayers.commands.NicknameSC;
 import io.github.pseudoresonance.pseudoplayers.commands.PingSC;
 import io.github.pseudoresonance.pseudoplayers.commands.PlayerSC;
+import io.github.pseudoresonance.pseudoplayers.completers.NicknameTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PlayerTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PseudoPlayersTC;
 import io.github.pseudoresonance.pseudoplayers.listeners.PlayerJoinLeaveL;
@@ -46,6 +49,7 @@ public class PseudoPlayers extends PseudoPlugin {
 		this.saveDefaultConfig();
 		plugin = this;
 		ServerPlayerDataController.addColumn(new Column("logoutLocation", "VARCHAR(117)", "NULL"));
+		PlayerDataController.addColumn(new Column("nickname", "VARCHAR(100)", "NULL"));
 		config = new Config(this);
 		config.updateConfig();
 		playerSubCommand = new PlayerSC();
@@ -92,6 +96,7 @@ public class PseudoPlayers extends PseudoPlugin {
 		this.getCommand("pseudoplayers").setExecutor(mainCommand);
 		this.getCommand("player").setExecutor(playerSubCommand);
 		this.getCommand("ping").setExecutor(pingSubCommand);
+		this.getCommand("nickname").setExecutor(new NicknameSC());
 	}
 	
 	public static void registerPCommand() {
@@ -113,6 +118,7 @@ public class PseudoPlayers extends PseudoPlugin {
 	private void initializeTabcompleters() {
 		this.getCommand("pseudoplayers").setTabCompleter(new PseudoPlayersTC());
 		this.getCommand("player").setTabCompleter(playerTabCompleter);
+		this.getCommand("nickname").setTabCompleter(new NicknameTC());
 	}
 
 	private void initializeListeners() {
@@ -124,6 +130,7 @@ public class PseudoPlayers extends PseudoPlugin {
 		commandDescriptions.add(new CommandDescription("pseudoplayers help", "Shows PseudoPlayers commands", ""));
 		commandDescriptions.add(new CommandDescription("pseudoplayers reload", "Reloads PseudoPlayers config", "pseudoplayers.reload"));
 		commandDescriptions.add(new CommandDescription("pseudoplayers reset", "Resets PseudoPlayers config", "pseudoplayers.reset"));
+		commandDescriptions.add(new CommandDescription("nickname", "Nicknames a player", "pseudoplayers.nickname"));
 		commandDescriptions.add(new CommandDescription("ping", "Shows a user's ping", "pseudoplayers.ping"));
 		commandDescriptions.add(new CommandDescription("player", "Shows information on a player", "pseudoplayers.view"));
 	}

@@ -15,6 +15,10 @@ commands:
   ping:
     description: Shows player ping
     permission: pseudoplayers.ping
+  nickname:
+    description: Changes player nicknames
+    permission: pseudoplayers.nickname
+    aliases: [nick,name]
 permissions:
   pseudoplayers.reset:
     description: Allows the player to reset the config
@@ -30,6 +34,44 @@ permissions:
     default: op
     children:
       pseudoplayers.ping: true
+  pseudoplayers.nickname:
+    description: Allows the player to use the nickname command
+    default: op
+  pseudoplayers.nickname.set:
+    description: Allows the player to change their nickname
+    default: op
+    children:
+      pseudoplayers.nickname: true
+  pseudoplayers.nickname.set.others:
+    description: Allows the player to change the nickname of other players
+    default: op
+    children:
+      pseudoplayers.nickname.set: true
+  pseudoplayers.nickname.view:
+    description: Allows the player to view their nickname
+    default: op
+    children:
+      pseudoplayers.nickname: true
+  pseudoplayers.nickname.view.others:
+    description: Allows the player to view other players' nicknames
+    default: op
+    children:
+      pseudoplayers.nickname.view: true
+  pseudoplayers.nickname.colors:
+    description: Allows the player to use colors in their nickname
+    default: op
+    children:
+      pseudoplayers.nickname: true
+  pseudoplayers.nickname.formatting:
+    description: Allows the player to use formatting in their nickname
+    default: op
+    children:
+      pseudoplayers.nickname: true
+  pseudoplayers.nickname.obfuscated:
+    description: Allows the player to use obfuscation in their nickname
+    default: op
+    children:
+      pseudoplayers.nickname: true
   pseudoplayers.view:
     description: Allows the player to view player information about themselves
     default: true
@@ -40,6 +82,11 @@ permissions:
       pseudoplayers.view: true
   pseudoplayers.view.uuid:
     description: Allows the player to see the uuid of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.username:
+    description: Allows the player to see the username of a nicknamed player
     default: op
     children:
       pseudoplayers.view: true
