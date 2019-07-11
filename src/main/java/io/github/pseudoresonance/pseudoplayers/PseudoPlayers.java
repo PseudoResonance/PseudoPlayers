@@ -48,7 +48,7 @@ public class PseudoPlayers extends PseudoPlugin {
 		super.onEnable();
 		this.saveDefaultConfig();
 		plugin = this;
-		ServerPlayerDataController.addColumn(new Column("logoutLocation", "VARCHAR(117)", "NULL"));
+		ServerPlayerDataController.addColumn(new Column("logoutLocation", "VARCHAR(225)", "NULL"));
 		PlayerDataController.addColumn(new Column("nickname", "VARCHAR(100)", "NULL"));
 		config = new Config(this);
 		config.updateConfig();
