@@ -24,6 +24,7 @@ public class NicknameSC implements SubCommandExecutor {
 	Pattern colorFormattingPattern = Pattern.compile("&[0-9a-fl-o]", Pattern.CASE_INSENSITIVE);
 	Pattern colorObfuscatePattern = Pattern.compile("&[0-9a-fk]", Pattern.CASE_INSENSITIVE);
 	Pattern formattingObfuscatePattern = Pattern.compile("&[l-ok]", Pattern.CASE_INSENSITIVE);
+	Pattern asciiPattern = Pattern.compile("[^ -~]");
 	Pattern allPattern = Pattern.compile("&[0-9a-frl-ok]", Pattern.CASE_INSENSITIVE);
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -63,6 +64,10 @@ public class NicknameSC implements SubCommandExecutor {
 									nickname = match.replaceAll("");
 								} else if (!sender.hasPermission("pseudoplayers.nickname.colors") && !sender.hasPermission("pseudoplayers.nickname.formatting") && !sender.hasPermission("pseudoplayers.nickname.obfuscated")) {
 									Matcher match = allPattern.matcher(nickname);
+									nickname = match.replaceAll("");
+								}
+								if (!sender.hasPermission("pseudoplayers.nickname.special")) {
+									Matcher match = asciiPattern.matcher(nickname);
 									nickname = match.replaceAll("");
 								}
 								if (nickname.length() > 100)
@@ -155,6 +160,10 @@ public class NicknameSC implements SubCommandExecutor {
 									nickname = match.replaceAll("");
 								} else if (!sender.hasPermission("pseudoplayers.nickname.colors") && !sender.hasPermission("pseudoplayers.nickname.formatting") && !sender.hasPermission("pseudoplayers.nickname.obfuscated")) {
 									Matcher match = allPattern.matcher(nickname);
+									nickname = match.replaceAll("");
+								}
+								if (!sender.hasPermission("pseudoplayers.nickname.special")) {
+									Matcher match = asciiPattern.matcher(nickname);
 									nickname = match.replaceAll("");
 								}
 								if (nickname.length() > 100)

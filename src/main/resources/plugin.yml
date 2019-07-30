@@ -72,6 +72,11 @@ permissions:
     default: op
     children:
       pseudoplayers.nickname: true
+  pseudoplayers.nickname.special:
+    description: Allows the player to use non ASCII characters in their nickname
+    default: op
+    children:
+      pseudoplayers.nickname: true
   pseudoplayers.view:
     description: Allows the player to view player information about themselves
     default: true
@@ -177,3 +182,9 @@ permissions:
       pseudoplayers.view.op: true
       pseudoplayers.view.god: true
       pseudoplayers.view.fly: true
+      pseudoplayers.nickname.set.others: true
+      pseudoplayers.nickname.view.others: true
+      pseudoplayers.nickname.colors: true
+      pseudoplayers.nickname.formatting: true
+      pseudoplayers.nickname.obfuscated: true
+      pseudoplayers.nickname.special: true
