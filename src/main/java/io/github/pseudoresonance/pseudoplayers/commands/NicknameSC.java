@@ -69,9 +69,14 @@ public class NicknameSC implements SubCommandExecutor {
 								if (!sender.hasPermission("pseudoplayers.nickname.special")) {
 									Matcher match = asciiPattern.matcher(nickname);
 									nickname = match.replaceAll("");
+									nickname = nickname.trim();
 								}
 								if (nickname.length() > 100)
 									nickname = nickname.substring(0, 100);
+								if (nickname.length() <= 0) {
+									PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a valid nickname!");
+									return false;
+								}
 								nickname = ChatColor.translateAlternateColorCodes('&', nickname);
 								PlayerDataController.setPlayerSetting(((Player) sender).getUniqueId().toString(), "nickname", nickname);
 								((Player) sender).setDisplayName(nickname);
@@ -165,9 +170,14 @@ public class NicknameSC implements SubCommandExecutor {
 								if (!sender.hasPermission("pseudoplayers.nickname.special")) {
 									Matcher match = asciiPattern.matcher(nickname);
 									nickname = match.replaceAll("");
+									nickname = nickname.trim();
 								}
 								if (nickname.length() > 100)
 									nickname = nickname.substring(0, 100);
+								if (nickname.length() <= 0) {
+									PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a valid nickname!");
+									return false;
+								}
 								nickname = ChatColor.translateAlternateColorCodes('&', nickname);
 								PlayerDataController.setPlayerSetting(uuid, "nickname", nickname);
 								p.setDisplayName(nickname);
