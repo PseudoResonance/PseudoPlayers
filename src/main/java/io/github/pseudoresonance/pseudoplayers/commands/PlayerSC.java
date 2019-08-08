@@ -83,7 +83,7 @@ public class PlayerSC implements SubCommandExecutor {
 				online = true;
 				nickname = player.getDisplayName();
 			} else {
-				Object nicknameO = PlayerDataController.getPlayerSetting(uuid, "nickname");
+				Object nicknameO = PlayerDataController.getPlayerSetting(uuid, "nickname").join();
 				if (nicknameO instanceof String) {
 					nickname = (String) nicknameO;
 				} else {
@@ -103,12 +103,12 @@ public class PlayerSC implements SubCommandExecutor {
 			if (online)
 				onlineNetwork = true;
 			else {
-				Object onlineO = PlayerDataController.getPlayerSetting(uuid, "online");
+				Object onlineO = PlayerDataController.getPlayerSetting(uuid, "online").join();
 				if (onlineO instanceof Boolean) {
 					onlineNetwork = (Boolean) onlineO;
 				}
 			}
-			Object firstJoinO = PlayerDataController.getPlayerSetting(uuid, "firstjoin");
+			Object firstJoinO = PlayerDataController.getPlayerSetting(uuid, "firstjoin").join();
 			String firstJoinTime = "";
 			if (firstJoinO != null) {
 				Timestamp firstJoinTS = new Timestamp(System.currentTimeMillis());
@@ -132,7 +132,7 @@ public class PlayerSC implements SubCommandExecutor {
 			} else
 				firstJoinTime = "Unknown";
 			messages.add(Config.descriptionColor + "First Joined: " + Config.commandColor + firstJoinTime);
-			Object joinLeaveO = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave");
+			Object joinLeaveO = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave").join();
 			String joinLeaveTime = "";
 			if (joinLeaveO != null) {
 				Timestamp joinLeaveTS = new Timestamp(System.currentTimeMillis());
@@ -160,7 +160,7 @@ public class PlayerSC implements SubCommandExecutor {
 			else
 				messages.add(Config.descriptionColor + "Offline " + joinLeaveTime);
 			if (sender.hasPermission("pseudoplayers.view.playtime")) {
-				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime");
+				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime").join();
 				long playtime = 0;
 				if (playtimeO instanceof BigInteger || playtimeO instanceof Long) {
 					if (playtimeO instanceof BigInteger)
@@ -169,7 +169,7 @@ public class PlayerSC implements SubCommandExecutor {
 						playtime = (Long) playtimeO;
 				}
 				if (onlineNetwork) {
-					Object o = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave");
+					Object o = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave").join();
 					Timestamp joinLeaveTS = null;
 					if (o instanceof Timestamp) {
 						joinLeaveTS = (Timestamp) o;
@@ -202,7 +202,7 @@ public class PlayerSC implements SubCommandExecutor {
 				}
 			} else {
 				if (sender.hasPermission("pseudoplayers.view.logoutlocation")) {
-					Object logoutLocationO = ServerPlayerDataController.getPlayerSetting(uuid, "logoutLocation");
+					Object logoutLocationO = ServerPlayerDataController.getPlayerSetting(uuid, "logoutLocation").join();
 					if (logoutLocationO != null) {
 						if (logoutLocationO instanceof String) {
 							String s = (String) logoutLocationO;
@@ -232,7 +232,7 @@ public class PlayerSC implements SubCommandExecutor {
 					messages.add(Config.descriptionColor + "Online On: " + Config.commandColor + "This Server");
 			} else if (onlineNetwork) {
 				if (sender.hasPermission("pseudoplayers.view.server")) {
-					Object lastServerO = PlayerDataController.getPlayerSetting(uuid, "lastserver");
+					Object lastServerO = PlayerDataController.getPlayerSetting(uuid, "lastserver").join();
 					if (lastServerO instanceof String) {
 						String lastServer = (String) lastServerO;
 						messages.add(Config.descriptionColor + "Online On: " + Config.commandColor + lastServer);
@@ -240,7 +240,7 @@ public class PlayerSC implements SubCommandExecutor {
 				}
 			} else {
 				if (sender.hasPermission("pseudoplayers.view.lastserver")) {
-					Object lastServerO = PlayerDataController.getPlayerSetting(uuid, "lastserver");
+					Object lastServerO = PlayerDataController.getPlayerSetting(uuid, "lastserver").join();
 					if (lastServerO instanceof String) {
 						String lastServer = (String) lastServerO;
 						messages.add(Config.descriptionColor + "Last Online On: " + Config.commandColor + lastServer);
@@ -287,7 +287,7 @@ public class PlayerSC implements SubCommandExecutor {
 				if (online)
 					messages.add(Config.descriptionColor + "IP: " + Config.commandColor + Bukkit.getServer().getPlayer(name).getAddress().getAddress().getHostAddress());
 				else {
-					Object ipO = PlayerDataController.getPlayerSetting(uuid, "ip");
+					Object ipO = PlayerDataController.getPlayerSetting(uuid, "ip").join();
 					if (ipO instanceof String) {
 						String ip = (String) ipO;
 						if (!ip.equals("0.0.0.0")) {
@@ -321,7 +321,7 @@ public class PlayerSC implements SubCommandExecutor {
 			if (Bukkit.getPluginManager().getPlugin("PseudoUtils") != null) {
 				if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled() && online) {
 					if (sender.hasPermission("pseudoplayers.view.god")) {
-						Object godO = ServerPlayerDataController.getPlayerSetting(uuid, "godMode");
+						Object godO = ServerPlayerDataController.getPlayerSetting(uuid, "godMode").join();
 						boolean god = false;
 						if (godO instanceof Boolean) {
 							god = (Boolean) godO;

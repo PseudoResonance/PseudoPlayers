@@ -69,8 +69,8 @@ public class NicknameSC implements SubCommandExecutor {
 								if (!sender.hasPermission("pseudoplayers.nickname.special")) {
 									Matcher match = asciiPattern.matcher(nickname);
 									nickname = match.replaceAll("");
-									nickname = nickname.trim();
 								}
+								nickname = nickname.trim();
 								if (nickname.length() > 100)
 									nickname = nickname.substring(0, 100);
 								if (nickname.length() <= 0) {
@@ -198,7 +198,7 @@ public class NicknameSC implements SubCommandExecutor {
 					if (args.length == 1) {
 						if (sender instanceof Player) {
 							if (sender.hasPermission("pseudoplayers.nickname.view")) {
-								Object o = PlayerDataController.getPlayerSetting(((Player) sender).getUniqueId().toString(), "nickname");
+								Object o = PlayerDataController.getPlayerSetting(((Player) sender).getUniqueId().toString(), "nickname").join();
 								if (o == null) {
 									PseudoPlayers.message.sendPluginMessage(sender, "Your don't have a nickname");
 								} else {
@@ -218,7 +218,7 @@ public class NicknameSC implements SubCommandExecutor {
 							String uuid = PlayerDataController.getUUID(args[1]);
 							Player p = Bukkit.getPlayer(args[1]);
 							if (p == null && uuid != null) {
-								Object o = PlayerDataController.getPlayerSetting(uuid, "nickname");
+								Object o = PlayerDataController.getPlayerSetting(uuid, "nickname").join();
 								if (o == null) {
 									PseudoPlayers.message.sendPluginMessage(sender, PlayerDataController.getName(uuid) + " does not have a nickname");
 								} else {
@@ -229,7 +229,7 @@ public class NicknameSC implements SubCommandExecutor {
 								PseudoPlayers.message.sendPluginError(sender, Errors.NEVER_JOINED, args[1]);
 								return false;
 							} else {
-								Object o = PlayerDataController.getPlayerSetting(uuid, "nickname");
+								Object o = PlayerDataController.getPlayerSetting(uuid, "nickname").join();
 								if (o == null) {
 									PseudoPlayers.message.sendPluginMessage(sender, PlayerDataController.getName(uuid) + " does not have a nickname");
 								} else {

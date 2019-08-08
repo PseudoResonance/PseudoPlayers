@@ -1,6 +1,5 @@
 package io.github.pseudoresonance.pseudoplayers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.CommandDescription;
@@ -84,12 +83,12 @@ public class PseudoPlayers extends PseudoPlugin {
 				if (economyProvider != null)
 					economy = economyProvider.getProvider();
 				else
-					message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "No Vault economy is loaded! Player balance will not be shown!");
+					message.sendConsolePluginError(Errors.CUSTOM, "No Vault economy is loaded! Player balance will not be shown!");
 			} catch (ClassNotFoundException e) {
-				message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+				message.sendConsolePluginError(Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
 			}
 		} else
-			message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+			message.sendConsolePluginError(Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
 	}
 
 	private void initializeCommands() {

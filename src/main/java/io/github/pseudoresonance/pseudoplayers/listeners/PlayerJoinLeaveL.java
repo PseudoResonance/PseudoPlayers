@@ -22,7 +22,7 @@ public class PlayerJoinLeaveL implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		String uuid = e.getPlayer().getUniqueId().toString();
-		Object nicknameO = PlayerDataController.getPlayerSetting(uuid, "nickname");
+		Object nicknameO = PlayerDataController.getPlayerSetting(uuid, "nickname").join();
 		if (nicknameO instanceof String) {
 			String nickname = (String) nicknameO;
 			e.getPlayer().setDisplayName(nickname);
