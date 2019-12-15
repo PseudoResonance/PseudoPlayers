@@ -10,10 +10,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
 import io.github.pseudoresonance.pseudoapi.bukkit.messaging.PluginMessenger;
 import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 
 public class NicknameSC implements SubCommandExecutor {
@@ -30,14 +31,14 @@ public class NicknameSC implements SubCommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player) || sender.hasPermission("pseudoplayers.nickname")) {
 			if (args.length == 0) {
-				PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Valid subcommands are: set, reset, setplayer, view");
+				PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.INVALID_SUBCOMMAND, "'set', 'reset', 'setplayer', 'view'");
 				return false;
 			} else if (args.length >= 1) {
 				if (args[0].equalsIgnoreCase("set")) {
 					if (sender instanceof Player) {
 						if (sender.hasPermission("pseudoplayers.nickname.set")) {
 							if (args.length == 1) {
-								PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a new nickname!");
+								PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_new_nickname"));
 								return false;
 							} else {
 								String nickname = "";
@@ -74,7 +75,7 @@ public class NicknameSC implements SubCommandExecutor {
 								if (nickname.length() > 100)
 									nickname = nickname.substring(0, 100);
 								if (nickname.length() <= 0) {
-									PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a valid nickname!");
+									PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_valid_nickname"));
 									return false;
 								}
 								nickname = ChatColor.translateAlternateColorCodes('&', nickname);
@@ -84,15 +85,15 @@ public class NicknameSC implements SubCommandExecutor {
 								data.add(((Player) sender).getUniqueId().toString());
 								data.add(nickname);
 								PluginMessenger.sendToBungee(((Player) sender), "displayname", data);
-								PseudoPlayers.message.sendPluginMessage(sender, "Your nickname has been set to " + nickname);
+								PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.your_nickname_set", nickname));
 								return true;
 							}
 						} else {
-							PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "change your nickname!");
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_change_nickname"));
 							return false;
 						}
 					} else {
-						PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please use setplayer instead of set!");
+						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_use_setplayer"));
 						return false;
 					}
 				} else if (args[0].equalsIgnoreCase("reset")) {
@@ -103,16 +104,16 @@ public class NicknameSC implements SubCommandExecutor {
 							ArrayList<Object> data = new ArrayList<Object>();
 							data.add(((Player) sender).getUniqueId().toString());
 							PluginMessenger.sendToBungee(((Player) sender), "resetdisplayname", data);
-							PseudoPlayers.message.sendPluginMessage(sender, "Your nickname has been reset!");
+							PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.your_nickname_reset"));
 							return true;
 						} else {
-							PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a player!");
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_a_player"));
 							return false;
 						}
 					} else {
 						Player p = Bukkit.getPlayer(args[1]);
 						if (p == null) {
-							PseudoPlayers.message.sendPluginError(sender, Errors.NOT_ONLINE, args[1]);
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NOT_ONLINE, args[1]);
 							return false;
 						} else {
 							String uuid = p.getUniqueId().toString();
@@ -121,23 +122,23 @@ public class NicknameSC implements SubCommandExecutor {
 							ArrayList<Object> data = new ArrayList<Object>();
 							data.add(uuid);
 							PluginMessenger.sendToBungee(p, "resetdisplayname", data);
-							PseudoPlayers.message.sendPluginMessage(p, "Your nickname has been reset!");
-							PseudoPlayers.message.sendPluginMessage(sender, p.getName() + "'s nickname has been reset!");
+							PseudoPlayers.plugin.getChat().sendPluginMessage(p, LanguageManager.getLanguage(p).getMessage("pseudoplayers.your_nickname_reset"));
+							PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_nickname_reset", p.getName()));
 							return true;
 						}
 					}
 				} else if (args[0].equalsIgnoreCase("setplayer")) {
 					if (sender.hasPermission("pseudoplayers.nickname.set.others")) {
 						if (args.length == 1) {
-							PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a player and a new nickname!");
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_a_player_new_nickname"));
 							return false;
 						} else if (args.length == 2) {
-							PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a new nickname!");
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_new_nickname"));
 							return false;
 						} else {
 							Player p = Bukkit.getPlayer(args[1]);
 							if (p == null) {
-								PseudoPlayers.message.sendPluginError(sender, Errors.NOT_ONLINE, args[1]);
+								PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NOT_ONLINE, args[1]);
 								return false;
 							} else {
 								String uuid = p.getUniqueId().toString();
@@ -175,7 +176,7 @@ public class NicknameSC implements SubCommandExecutor {
 								if (nickname.length() > 100)
 									nickname = nickname.substring(0, 100);
 								if (nickname.length() <= 0) {
-									PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a valid nickname!");
+									PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_valid_nickname"));
 									return false;
 								}
 								nickname = ChatColor.translateAlternateColorCodes('&', nickname);
@@ -185,13 +186,13 @@ public class NicknameSC implements SubCommandExecutor {
 								data.add(uuid);
 								data.add(nickname);
 								PluginMessenger.sendToBungee(p, "displayname", data);
-								PseudoPlayers.message.sendPluginMessage(p, "Your nickname has been set to " + nickname);
-								PseudoPlayers.message.sendPluginMessage(sender, p.getName() + "'s nickname has been set to " + nickname);
+								PseudoPlayers.plugin.getChat().sendPluginMessage(p, LanguageManager.getLanguage(p).getMessage("pseudoplayers.your_nickname_set", nickname));
+								PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_nickname_set", p.getName(), nickname));
 								return true;
 							}
 						}
 					} else {
-						PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "change other players' nicknames!");
+						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_change_nickname_others"));
 						return false;
 					}
 				} else if (args[0].equalsIgnoreCase("view")) {
@@ -200,17 +201,17 @@ public class NicknameSC implements SubCommandExecutor {
 							if (sender.hasPermission("pseudoplayers.nickname.view")) {
 								Object o = PlayerDataController.getPlayerSetting(((Player) sender).getUniqueId().toString(), "nickname").join();
 								if (o == null) {
-									PseudoPlayers.message.sendPluginMessage(sender, "Your don't have a nickname");
+									PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.you_no_nickname"));
 								} else {
-									PseudoPlayers.message.sendPluginMessage(sender, "Your nickname is " + o);
+									PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.your_nickname_is", o));
 								}
 								return true;
 							} else {
-								PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "view your nickname!");
+								PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_view_nickname"));
 								return false;
 							}
 						} else {
-							PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a player!");
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_a_player"));
 							return false;
 						}
 					} else {
@@ -220,36 +221,36 @@ public class NicknameSC implements SubCommandExecutor {
 							if (p == null && uuid != null) {
 								Object o = PlayerDataController.getPlayerSetting(uuid, "nickname").join();
 								if (o == null) {
-									PseudoPlayers.message.sendPluginMessage(sender, PlayerDataController.getName(uuid) + " does not have a nickname");
+									PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_no_nickname", PlayerDataController.getName(uuid)));
 								} else {
-									PseudoPlayers.message.sendPluginMessage(sender, PlayerDataController.getName(uuid) + "'s nickname is " + o);
+									PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_nickname_is", PlayerDataController.getName(uuid), o));
 								}
 								return true;
 							} else if (p == null && uuid == null) {
-								PseudoPlayers.message.sendPluginError(sender, Errors.NEVER_JOINED, args[1]);
+								PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NEVER_JOINED, args[1]);
 								return false;
 							} else {
 								Object o = PlayerDataController.getPlayerSetting(uuid, "nickname").join();
 								if (o == null) {
-									PseudoPlayers.message.sendPluginMessage(sender, PlayerDataController.getName(uuid) + " does not have a nickname");
+									PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_no_nickname", PlayerDataController.getName(uuid)));
 								} else {
-									PseudoPlayers.message.sendPluginMessage(sender, PlayerDataController.getName(uuid) + "'s nickname is " + o);
+									PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_nickname_is", PlayerDataController.getName(uuid), o));
 								}
 								return true;
 							}
 						} else {
-							PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "view other players' nicknames!");
+							PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_view_nickname_others"));
 							return false;
 						}
 					}
 				} else {
-					PseudoPlayers.message.sendPluginError(sender, Errors.CUSTOM, "Valid subcommands are: set, reset, setplayer, view");
+					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.INVALID_SUBCOMMAND, "'set', 'reset', 'setplayer', 'view'");
 					return false;
 				}
 			}
 			return false;
 		} else {
-			PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "change your nickname!");
+			PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_change_nickname"));
 			return false;
 		}
 	}

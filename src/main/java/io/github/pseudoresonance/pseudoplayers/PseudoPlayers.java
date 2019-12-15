@@ -2,22 +2,24 @@ package io.github.pseudoresonance.pseudoplayers;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
 import io.github.pseudoresonance.pseudoapi.bukkit.CommandDescription;
 import io.github.pseudoresonance.pseudoapi.bukkit.HelpSC;
 import io.github.pseudoresonance.pseudoapi.bukkit.MainCommand;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoUpdater;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
 import io.github.pseudoresonance.pseudoplayers.commands.ReloadSC;
+import io.github.pseudoresonance.pseudoplayers.commands.ResetLocalizationSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ResetSC;
 import io.github.pseudoresonance.pseudoplayers.commands.NicknameSC;
 import io.github.pseudoresonance.pseudoplayers.commands.PingSC;
 import io.github.pseudoresonance.pseudoplayers.commands.PlayerSC;
+import io.github.pseudoresonance.pseudoplayers.commands.ReloadLocalizationSC;
 import io.github.pseudoresonance.pseudoplayers.completers.NicknameTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PlayerTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PseudoPlayersTC;
@@ -26,7 +28,6 @@ import io.github.pseudoresonance.pseudoplayers.listeners.PlayerJoinLeaveL;
 public class PseudoPlayers extends PseudoPlugin {
 
 	public static PseudoPlugin plugin;
-	public static Message message;
 
 	private static MainCommand mainCommand;
 	private static HelpSC helpSubCommand;
@@ -54,7 +55,6 @@ public class PseudoPlayers extends PseudoPlugin {
 		playerSubCommand = new PlayerSC();
 		playerTabCompleter = new PlayerTC();
 		config.reloadConfig();
-		message = new Message(this);
 		initVault();
 		mainCommand = new MainCommand(plugin);
 		helpSubCommand = new HelpSC(plugin);
@@ -83,12 +83,12 @@ public class PseudoPlayers extends PseudoPlugin {
 				if (economyProvider != null)
 					economy = economyProvider.getProvider();
 				else
-					message.sendConsolePluginError(Errors.CUSTOM, "No Vault economy is loaded! Player balance will not be shown!");
+					getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_economy_loaded"));
 			} catch (ClassNotFoundException e) {
-				message.sendConsolePluginError(Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+				getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_loaded"));
 			}
 		} else
-			message.sendConsolePluginError(Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+			getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_loaded"));
 	}
 
 	private void initializeCommands() {
@@ -109,7 +109,9 @@ public class PseudoPlayers extends PseudoPlugin {
 	private void initializeSubCommands() {
 		subCommands.put("help", helpSubCommand);
 		subCommands.put("reload", new ReloadSC());
+		subCommands.put("reloadlocalization", new ReloadLocalizationSC());
 		subCommands.put("reset", new ResetSC());
+		subCommands.put("resetlocalization", new ResetLocalizationSC());
 		subCommands.put("player", playerSubCommand);
 		subCommands.put("ping", pingSubCommand);
 	}
@@ -125,13 +127,15 @@ public class PseudoPlayers extends PseudoPlugin {
 	}
 
 	private void setCommandDescriptions() {
-		commandDescriptions.add(new CommandDescription("pseudoplayers", "Shows PseudoPlayers information", ""));
-		commandDescriptions.add(new CommandDescription("pseudoplayers help", "Shows PseudoPlayers commands", ""));
-		commandDescriptions.add(new CommandDescription("pseudoplayers reload", "Reloads PseudoPlayers config", "pseudoplayers.reload"));
-		commandDescriptions.add(new CommandDescription("pseudoplayers reset", "Resets PseudoPlayers config", "pseudoplayers.reset"));
-		commandDescriptions.add(new CommandDescription("nickname", "Nicknames a player", "pseudoplayers.nickname"));
-		commandDescriptions.add(new CommandDescription("ping", "Shows a user's ping", "pseudoplayers.ping"));
-		commandDescriptions.add(new CommandDescription("player", "Shows information on a player", "pseudoplayers.view"));
+		commandDescriptions.add(new CommandDescription("pseudoplayers", "pseudoplayers.pseudoplayers_help", ""));
+		commandDescriptions.add(new CommandDescription("pseudoplayers help", "pseudoplayers.pseudoplayers_help_help", ""));
+		commandDescriptions.add(new CommandDescription("pseudoplayers reload", "pseudoplayers.pseudoplayers_reload_help", "pseudoplayers.reload"));
+		commandDescriptions.add(new CommandDescription("pseudoplayers reloadlocalization", "pseudoplayers.pseudoplayers_reloadlocalization_help", "pseudoplayers.reloadlocalization"));
+		commandDescriptions.add(new CommandDescription("pseudoplayers reset", "pseudoplayers.pseudoplayers_reset_help", "pseudoplayers.reset"));
+		commandDescriptions.add(new CommandDescription("pseudoplayers resetlocalization", "pseudoplayers.pseudoplayers_resetlocalization_help", "pseudoplayers.resetlocalization"));
+		commandDescriptions.add(new CommandDescription("nickname", "pseudoplayers.pseudoplayers_nickname_help", "pseudoplayers.nickname", false));
+		commandDescriptions.add(new CommandDescription("ping", "pseudoplayers.pseudoplayers_ping_help", "pseudoplayers.ping"));
+		commandDescriptions.add(new CommandDescription("player", "pseudoplayers.pseudoplayers_player_help", "pseudoplayers.view"));
 	}
 
 }

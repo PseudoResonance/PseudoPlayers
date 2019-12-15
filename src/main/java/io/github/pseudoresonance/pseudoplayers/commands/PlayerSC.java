@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -25,18 +24,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
 import io.github.pseudoresonance.pseudoapi.bukkit.Config;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message;
-import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.ChatComponent;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.ChatComponent.ComponentType;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.ChatElement;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.ElementBuilder;
-import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
 
 public class PlayerSC implements SubCommandExecutor {
@@ -52,7 +49,7 @@ public class PlayerSC implements SubCommandExecutor {
 					uuid = ((Player) sender).getUniqueId().toString();
 					name = ((Player) sender).getName();
 				} else {
-					PseudoAPI.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a player to view details on!");
+					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_a_player_view_details"));
 					return false;
 				}
 			} else {
@@ -66,7 +63,7 @@ public class PlayerSC implements SubCommandExecutor {
 							if (sender.hasPermission("pseudoplayers.view.others"))
 								uuid = pUuid;
 							else {
-								PseudoAPI.message.sendPluginError(sender, Errors.NO_PERMISSION, "view other player's details!");
+								PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_view_player_details_others"));
 								return false;
 							}
 						}
@@ -74,7 +71,7 @@ public class PlayerSC implements SubCommandExecutor {
 						uuid = pUuid;
 					}
 				} else {
-					PseudoAPI.message.sendPluginError(sender, Errors.NEVER_JOINED, args[0]);
+					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NEVER_JOINED, args[0]);
 					return false;
 				}
 			}
@@ -92,13 +89,13 @@ public class PlayerSC implements SubCommandExecutor {
 			}
 			List<Object> messages = new ArrayList<Object>();
 			if (nickname != "")
-				messages.add(Config.borderColor + "===---" + Config.titleColor + nickname + Config.titleColor + "'s Details" + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_details", nickname + Config.titleColor) + Config.borderColor + "---===");
 			else
-				messages.add(Config.borderColor + "===---" + Config.titleColor + name + "'s Details" + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_details", name) + Config.borderColor + "---===");
 			if (sender.hasPermission("pseudoplayers.view.uuid"))
-				messages.add(Config.descriptionColor + "UUID: " + Config.commandColor + uuid);
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_uuid", Config.commandColor + uuid));
 			if (sender.hasPermission("pseudoplayers.view.username"))
-				messages.add(Config.descriptionColor + "Username: " + Config.commandColor + name);
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_username", Config.commandColor + name));
 			boolean onlineNetwork = false;
 			if (online)
 				onlineNetwork = true;
@@ -121,16 +118,12 @@ public class PlayerSC implements SubCommandExecutor {
 				LocalDate firstJoinDate = firstJoinTS.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				long firstJoinDays = ChronoUnit.DAYS.between(firstJoinDate, Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
 				if (firstJoinDays >= io.github.pseudoresonance.pseudoplayers.Config.firstJoinTimeDifference) {
-					firstJoinTime = new SimpleDateFormat(io.github.pseudoresonance.pseudoplayers.Config.firstJoinTimeFormat).format(firstJoinTS);
+					firstJoinTime = LanguageManager.getLanguage(sender).formatDateTime(firstJoinTS);
 				} else {
-					long diff = System.currentTimeMillis() - firstJoinTS.getTime();
-					if (diff < 0) {
-						diff = 0 - diff;
-					}
-					firstJoinTime = Utils.millisToHumanFormat(diff) + " ago";
+					firstJoinTime = LanguageManager.getLanguage(sender).formatTimeAgo(firstJoinTS, ChronoUnit.SECONDS, ChronoUnit.DAYS);
 				}
 			} else
-				firstJoinTime = "Unknown";
+				firstJoinTime = LanguageManager.getLanguage(sender).getMessage("pseudoplayers.unknown");
 			messages.add(Config.descriptionColor + "First Joined: " + Config.commandColor + firstJoinTime);
 			Object joinLeaveO = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave").join();
 			String joinLeaveTime = "";
@@ -145,28 +138,26 @@ public class PlayerSC implements SubCommandExecutor {
 				LocalDate joinLeaveDate = joinLeaveTS.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				long joinLeaveDays = ChronoUnit.DAYS.between(joinLeaveDate, Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
 				if (joinLeaveDays >= io.github.pseudoresonance.pseudoplayers.Config.joinLeaveTimeDifference) {
-					joinLeaveTime = "Since: " + Config.commandColor + new SimpleDateFormat(io.github.pseudoresonance.pseudoplayers.Config.joinLeaveTimeFormat).format(joinLeaveTS);
+					joinLeaveTime = LanguageManager.getLanguage(sender).getMessage("pseudoplayers.time_since", Config.commandColor + LanguageManager.getLanguage(sender).formatDateTime(joinLeaveTS));
 				} else {
-					long diff = System.currentTimeMillis() - joinLeaveTS.getTime();
-					if (diff < 0) {
-						diff = 0 - diff;
-					}
-					joinLeaveTime = "For: " + Config.commandColor + Utils.millisToHumanFormat(diff);
+					joinLeaveTime = LanguageManager.getLanguage(sender).getMessage("pseudoplayers.time_for", Config.commandColor + LanguageManager.getLanguage(sender).formatTimeAgo(joinLeaveTS, false, ChronoUnit.SECONDS, ChronoUnit.DAYS));
 				}
 			} else
 				joinLeaveTime = "Unknown";
 			if (onlineNetwork)
-				messages.add(Config.descriptionColor + "Online " + joinLeaveTime);
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.time_online", joinLeaveTime));
 			else
-				messages.add(Config.descriptionColor + "Offline " + joinLeaveTime);
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.time_offline", joinLeaveTime));
 			if (sender.hasPermission("pseudoplayers.view.playtime")) {
 				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime").join();
 				long playtime = 0;
-				if (playtimeO instanceof BigInteger || playtimeO instanceof Long) {
+				if (playtimeO instanceof BigInteger || playtimeO instanceof Long || playtimeO instanceof Integer) {
 					if (playtimeO instanceof BigInteger)
 						playtime = ((BigInteger) playtimeO).longValueExact();
-					else
+					else if (playtimeO instanceof Long)
 						playtime = (Long) playtimeO;
+					else
+						playtime = (Integer) playtimeO;
 				}
 				if (onlineNetwork) {
 					Object o = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave").join();
@@ -183,7 +174,7 @@ public class PlayerSC implements SubCommandExecutor {
 						playtime += diff;
 					}
 				}
-				messages.add(Config.descriptionColor + "Playtime: " + Config.commandColor + Utils.millisToHumanFormat(playtime));
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_playtime", Config.commandColor + LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
 			}
 			if (online) {
 				if (sender.hasPermission("pseudoplayers.view.location")) {
@@ -198,7 +189,7 @@ public class PlayerSC implements SubCommandExecutor {
 					tpCommand = tpCommand.replaceAll("\\{x\\}", x);
 					tpCommand = tpCommand.replaceAll("\\{y\\}", y);
 					tpCommand = tpCommand.replaceAll("\\{z\\}", z);
-					messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + "Location: "), new ChatElement(Config.commandColor + "World: " + world + " X: " + x + " Y: " + y + " Z: " + z, new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, Config.descriptionColor + "Click to teleport to coordinates"))).build());
+					messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_location") + " "), new ChatElement(Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", world, x, y, z), new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport")))).build());
 				}
 			} else {
 				if (sender.hasPermission("pseudoplayers.view.logoutlocation")) {
@@ -217,10 +208,10 @@ public class PlayerSC implements SubCommandExecutor {
 									tpCommand = tpCommand.replaceAll("\\{x\\}", split[2]);
 									tpCommand = tpCommand.replaceAll("\\{y\\}", split[3]);
 									tpCommand = tpCommand.replaceAll("\\{z\\}", split[4]);
-									messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + "Logout Location: "), new ChatElement(Config.commandColor + "World: " + worldName + " X: " + split[2] + " Y: " + split[3] + " Z: " + split[4], new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, Config.descriptionColor + "Click to teleport to coordinates"))).build());
+									messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_logout_location") + " "), new ChatElement(Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", worldName, split[2], split[3], split[4]), new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport")))).build());
 								} else {
 									worldName = split[1];
-									messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + "Logout Location: "), new ChatElement(Config.commandColor + "World: " + worldName + " X: " + split[2] + " Y: " + split[3] + " Z: " + split[4])).build());
+									messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_logout_location") + " "), new ChatElement(Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", worldName, split[2], split[3], split[4]))).build());
 								}
 							}
 						}
@@ -229,13 +220,13 @@ public class PlayerSC implements SubCommandExecutor {
 			}
 			if (online) {
 				if (sender.hasPermission("pseudoplayers.view.server"))
-					messages.add(Config.descriptionColor + "Online On: " + Config.commandColor + "This Server");
+					messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.online_on", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.this_server")));
 			} else if (onlineNetwork) {
 				if (sender.hasPermission("pseudoplayers.view.server")) {
 					Object lastServerO = PlayerDataController.getPlayerSetting(uuid, "lastserver").join();
 					if (lastServerO instanceof String) {
 						String lastServer = (String) lastServerO;
-						messages.add(Config.descriptionColor + "Online On: " + Config.commandColor + lastServer);
+						messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.online_on", Config.commandColor + lastServer));
 					}
 				}
 			} else {
@@ -243,7 +234,7 @@ public class PlayerSC implements SubCommandExecutor {
 					Object lastServerO = PlayerDataController.getPlayerSetting(uuid, "lastserver").join();
 					if (lastServerO instanceof String) {
 						String lastServer = (String) lastServerO;
-						messages.add(Config.descriptionColor + "Last Online On: " + Config.commandColor + lastServer);
+						messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.last_online_on", Config.commandColor + lastServer));
 					}
 				}
 			}
@@ -251,7 +242,7 @@ public class PlayerSC implements SubCommandExecutor {
 				if (sender.hasPermission("pseudoplayers.view.balance")) {
 					OfflinePlayer op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(uuid));
 					double bal = 0.0;
-					String formatBal = "$0";
+					String formatBal = "";
 					try {
 						Class<?> c = Class.forName("net.milkbowl.vault.economy.Economy");
 						if (c.isInstance(PseudoPlayers.economy)) {
@@ -276,22 +267,23 @@ public class PlayerSC implements SubCommandExecutor {
 							}
 						}
 						if (!exit) {
-							PseudoPlayers.message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "An error has occurred while getting the balance of: " + PlayerDataController.getName(uuid) + "! Please ensure Vault is up to date, and if so, report this to the author!");
+							formatBal = LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error");
+							PseudoPlayers.plugin.getChat().sendPluginError(Bukkit.getConsoleSender(), Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_getting_balance", PlayerDataController.getName(uuid)));
 							e.printStackTrace();
 						}
 					}
-					messages.add(Config.descriptionColor + "Balance: " + Config.commandColor + formatBal);
+					messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_balance", Config.commandColor + formatBal));
 				}
 			}
 			if (sender.hasPermission("pseudoplayers.view.ip")) {
 				if (online)
-					messages.add(Config.descriptionColor + "IP: " + Config.commandColor + Bukkit.getServer().getPlayer(name).getAddress().getAddress().getHostAddress());
+					messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_ip", Config.commandColor + Bukkit.getServer().getPlayer(name).getAddress().getAddress().getHostAddress()));
 				else {
 					Object ipO = PlayerDataController.getPlayerSetting(uuid, "ip").join();
 					if (ipO instanceof String) {
 						String ip = (String) ipO;
 						if (!ip.equals("0.0.0.0")) {
-							messages.add(Config.descriptionColor + "IP: " + Config.commandColor + ip);
+							messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_ip", Config.commandColor + ip));
 						}
 					}
 				}
@@ -299,24 +291,24 @@ public class PlayerSC implements SubCommandExecutor {
 			if (sender.hasPermission("pseudoplayers.view.gamemode") && online) {
 				GameMode gm = Bukkit.getServer().getPlayer(name).getGameMode();
 				String mode = gm.toString();
-				messages.add(Config.descriptionColor + "Gamemode: " + Config.commandColor + mode.substring(0, 1).toUpperCase() + mode.substring(1).toLowerCase());
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_gamemode", Config.commandColor + mode.substring(0, 1).toUpperCase() + mode.substring(1).toLowerCase()));
 			}
 			if (sender.hasPermission("pseudoplayers.view.health") && online) {
 				AttributeInstance max = Bukkit.getServer().getPlayer(name).getAttribute(Attribute.GENERIC_MAX_HEALTH);
 				int health = (int) Math.round(Bukkit.getServer().getPlayer(name).getHealth());
-				messages.add(Config.descriptionColor + "Health: " + Config.commandColor + health + "/" + ((int) Math.round(max.getValue())));
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_health", Config.commandColor + health, ((int) Math.round(max.getValue()))));
 			}
 			if (sender.hasPermission("pseudoplayers.view.hunger") && online) {
 				int food = Bukkit.getServer().getPlayer(name).getFoodLevel();
 				float sat = Bukkit.getServer().getPlayer(name).getSaturation();;
-				messages.add(Config.descriptionColor + "Hunger: " + Config.commandColor + food + "/20 (+" + sat + " saturation)");
+				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_hunger", Config.commandColor + food, 20, sat));
 			}
 			if (sender.hasPermission("pseudoplayers.view.op") && online) {
 				boolean op = Bukkit.getServer().getPlayer(name).isOp();
 				if (op)
-					messages.add(Config.descriptionColor + "OP: " + Config.commandColor + "True");
+					messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_op", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.true")));
 				else
-					messages.add(Config.descriptionColor + "OP: " + Config.commandColor + "False");
+					messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_op", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.false")));
 			}
 			if (Bukkit.getPluginManager().getPlugin("PseudoUtils") != null) {
 				if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled() && online) {
@@ -327,9 +319,9 @@ public class PlayerSC implements SubCommandExecutor {
 							god = (Boolean) godO;
 						}
 						if (god)
-							messages.add(Config.descriptionColor + "God Mode: " + Config.commandColor + "Enabled");
+							messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_god_mode", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.enabled")));
 						else
-							messages.add(Config.descriptionColor + "God Mode: " + Config.commandColor + "Disabled");
+							messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_god_mode", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.disabled")));
 					}
 				}
 			}
@@ -338,17 +330,17 @@ public class PlayerSC implements SubCommandExecutor {
 				if (fly) {
 					boolean isFly = Bukkit.getServer().getPlayer(name).isFlying();
 					if (isFly)
-						messages.add(Config.descriptionColor + "Fly Mode: " + Config.commandColor + "Enabled (Flying)");
+						messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_fly_mode", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.enabled_flying")));
 					else
-						messages.add(Config.descriptionColor + "Fly Mode: " + Config.commandColor + "Enabled");
+						messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_fly_mode", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.enabled")));
 				}
 				else
-					messages.add(Config.descriptionColor + "Fly Mode: " + Config.commandColor + "Disabled");
+					messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_fly_mode", Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.disabled")));
 			}
-			Message.sendMessage(sender, messages);
+			Chat.sendMessage(sender, messages);
 			return true;
 		} else {
-			PseudoAPI.message.sendPluginError(sender, Errors.NO_PERMISSION, "view player details!");
+			PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_view_player_details"));
 		}
 		return false;
 	}

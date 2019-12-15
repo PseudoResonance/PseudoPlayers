@@ -9,12 +9,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
 import io.github.pseudoresonance.pseudoapi.bukkit.Config;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 
 public class PingSC implements SubCommandExecutor {
 
@@ -40,15 +41,15 @@ public class PingSC implements SubCommandExecutor {
 						if (pingField == null)
 							pingField = entityPlayerClass.getField("ping");
 						int ping = pingField.getInt(entityPlayer);
-						PseudoAPI.message.sendPluginMessage(sender, "Your Ping: " + ping + "ms");
+						PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.your_ping", ping));
 						return true;
 					} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
 						e.printStackTrace();
-						PseudoAPI.message.sendPluginError(sender, Errors.CUSTOM, "There was an error while getting your ping! Please contact an administrator!");
+						PseudoAPI.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_while_getting_ping"));
 						return false;
 					}
 				} else {
-					PseudoAPI.message.sendPluginError(sender, Errors.CUSTOM, "Please specify a player whose ping to view!");
+					PseudoAPI.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_specify_player_ping"));
 					return false;
 				}
 			} else {
@@ -67,24 +68,24 @@ public class PingSC implements SubCommandExecutor {
 							if (pingField == null)
 								pingField = entityPlayerClass.getField("ping");
 							int ping = pingField.getInt(entityPlayer);
-							PseudoAPI.message.sendPluginMessage(sender, p.getDisplayName() + Config.textColor + "'s Ping: " + ping + "ms");
+							PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.players_ping", p.getDisplayName(), ping));
 							return true;
 						} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
 							e.printStackTrace();
-							PseudoAPI.message.sendPluginError(sender, Errors.CUSTOM, "There was an error while getting " + p.getDisplayName() + Config.textColor + "'s ping! Please contact an administrator!");
+							PseudoAPI.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_while_getting_ping_others", p.getDisplayName()));
 							return false;
 						}
 					} else {
-						PseudoPlayers.message.sendPluginError(sender, Errors.NOT_ONLINE, args[0]);
+						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NOT_ONLINE, args[0]);
 						return false;
 					}
 				} else {
-					PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "get another player's ping!");
+					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_get_ping_others"));
 					return false;
 				}
 			}
 		} else {
-			PseudoPlayers.message.sendPluginError(sender, Errors.NO_PERMISSION, "get your ping!");
+			PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_get_ping"));
 			return false;
 		}
 	}

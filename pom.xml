@@ -6,7 +6,7 @@
 	<version>${revision}-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<revision>1.3</revision>
+		<revision>1.4</revision>
 	</properties>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -26,6 +26,32 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.coderplus.maven.plugins</groupId>
@@ -48,6 +74,22 @@
 									<sourceFile>target/${project.artifactId}-${project.version}.jar</sourceFile>
 									<destinationFile>artifacts/${project.artifactId}.jar</destinationFile>
 								</fileSet>
+								<fileSet>
+									<sourceFile>target/${project.artifactId}-${project.version}-javadoc.jar</sourceFile>
+									<destinationFile>artifacts/${project.artifactId}-${project.version}-javadoc.jar</destinationFile>
+								</fileSet>
+								<fileSet>
+									<sourceFile>target/${project.artifactId}-${project.version}-javadoc.jar</sourceFile>
+									<destinationFile>artifacts/${project.artifactId}-javadoc.jar</destinationFile>
+								</fileSet>
+								<fileSet>
+									<sourceFile>target/${project.artifactId}-${project.version}-sources.jar</sourceFile>
+									<destinationFile>artifacts/${project.artifactId}-${project.version}-sources.jar</destinationFile>
+								</fileSet>
+								<fileSet>
+									<sourceFile>target/${project.artifactId}-${project.version}-sources.jar</sourceFile>
+									<destinationFile>artifacts/${project.artifactId}-sources.jar</destinationFile>
+								</fileSet>
 							</fileSets>
 						</configuration>
 					</execution>
@@ -62,21 +104,21 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
+			<id>pseudo-repo</id>
+			<url>https://nexus.otake.pw/repository/maven-public/</url>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.14.3-SNAPSHOT</version>
+			<version>1.15-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.PseudoResonance</groupId>
+			<groupId>io.github.PseudoResonance</groupId>
 			<artifactId>PseudoAPI</artifactId>
-			<version>-SNAPSHOT</version>
+			<version>5.0.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
