@@ -38,6 +38,14 @@ import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
 
 public class PlayerSC implements SubCommandExecutor {
 
+	private static Class<?> vaultEconomy = null;
+	private static Method vaultGetBalanceM = null;
+	private static Method vaultFormatM = null;
+	
+	private static Class<?> vaultChat = null;
+	private static Method vaultGetPrefixM = null;
+	private static Method vaultGetSuffixM = null;
+
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player) || sender.hasPermission("pseudoplayers.view")) {
 			boolean online = false;
@@ -87,11 +95,49 @@ public class PlayerSC implements SubCommandExecutor {
 					nickname = "";
 				}
 			}
+			String prefix = "";
+			String suffix = "";
+			if (PseudoPlayers.chat != null) {
+				OfflinePlayer op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(uuid));
+				String world = null;
+				if (online)
+					world = player.getWorld().getName();
+				try {
+					if (vaultChat == null) {
+						vaultChat = Class.forName("net.milkbowl.vault.chat.Chat");
+						vaultGetPrefixM = vaultChat.getMethod("getPlayerPrefix", String.class, OfflinePlayer.class);
+						vaultGetSuffixM = vaultChat.getMethod("getPlayerSuffix", String.class, OfflinePlayer.class);
+						vaultGetPrefixM.setAccessible(true);
+						vaultGetSuffixM.setAccessible(true);
+					}
+					if (vaultChat.isInstance(PseudoPlayers.chat)) {
+						Object prefixO = vaultGetPrefixM.invoke(PseudoPlayers.chat, world, op);
+						Object suffixO = vaultGetSuffixM.invoke(PseudoPlayers.chat, world, op);
+						if (prefixO instanceof String)
+							prefix = (String) prefixO;
+						if (suffixO instanceof String)
+							suffix = (String) suffixO;
+					}
+				} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+					boolean exit = false;
+					if (e instanceof InvocationTargetException) {
+						if (e.getCause() != null) {
+							if (e.getCause() instanceof RuntimeException) {
+								exit = true;
+							}
+						}
+					}
+					if (!exit) {
+						PseudoPlayers.plugin.getChat().sendPluginError(Bukkit.getConsoleSender(), Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_getting_prefix_suffix", PlayerDataController.getName(uuid)));
+						e.printStackTrace();
+					}
+				}
+			}
 			List<Object> messages = new ArrayList<Object>();
 			if (nickname != "")
-				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_details", nickname + Config.titleColor) + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_details", prefix + nickname + suffix + Config.titleColor) + Config.borderColor + "---===");
 			else
-				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_details", name) + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_details", prefix + name + suffix + Config.titleColor) + Config.borderColor + "---===");
 			if (sender.hasPermission("pseudoplayers.view.uuid"))
 				messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_uuid", Config.commandColor + uuid));
 			if (sender.hasPermission("pseudoplayers.view.username"))
@@ -244,14 +290,18 @@ public class PlayerSC implements SubCommandExecutor {
 					double bal = 0.0;
 					String formatBal = "";
 					try {
-						Class<?> c = Class.forName("net.milkbowl.vault.economy.Economy");
-						if (c.isInstance(PseudoPlayers.economy)) {
-							Method balanceM = c.getMethod("getBalance", OfflinePlayer.class);
-							Object balO = balanceM.invoke(PseudoPlayers.economy, op);
+						if (vaultEconomy == null) {
+							vaultEconomy = Class.forName("net.milkbowl.vault.economy.Economy");
+							vaultGetBalanceM = vaultEconomy.getMethod("getBalance", OfflinePlayer.class);
+							vaultFormatM = vaultEconomy.getMethod("format", double.class);
+							vaultGetBalanceM.setAccessible(true);
+							vaultFormatM.setAccessible(true);
+						}
+						if (vaultEconomy.isInstance(PseudoPlayers.economy)) {
+							Object balO = vaultGetBalanceM.invoke(PseudoPlayers.economy, op);
 							if (balO instanceof Double) {
 								bal = (Double) balO;
-								Method formatM = c.getMethod("format", double.class);
-								Object finalO = formatM.invoke(PseudoPlayers.economy, bal);
+								Object finalO = vaultFormatM.invoke(PseudoPlayers.economy, bal);
 								if (finalO instanceof String) {
 									formatBal = (String) finalO;
 								}

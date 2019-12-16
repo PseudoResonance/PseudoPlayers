@@ -39,6 +39,7 @@ public class PseudoPlayers extends PseudoPlugin {
 	private static Config config;
 
 	public static Object economy = null;
+	public static Object chat = null;
 	
 	public void onLoad() {
 		PseudoUpdater.registerPlugin(this);
@@ -84,6 +85,15 @@ public class PseudoPlayers extends PseudoPlugin {
 					economy = economyProvider.getProvider();
 				else
 					getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_economy_loaded"));
+			} catch (ClassNotFoundException e) {
+				getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_loaded"));
+			}
+			try {
+				RegisteredServiceProvider<?> chatProvider = getServer().getServicesManager().getRegistration(Class.forName("net.milkbowl.vault.chat.Chat"));
+				if (chatProvider != null)
+					chat = chatProvider.getProvider();
+				else
+					getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_chat_loaded"));
 			} catch (ClassNotFoundException e) {
 				getChat().sendConsolePluginError(Chat.Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudoplayers.error_no_vault_loaded"));
 			}
