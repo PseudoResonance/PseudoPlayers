@@ -1,5 +1,6 @@
 package io.github.pseudoresonance.pseudoplayers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
@@ -10,6 +11,7 @@ import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoUpdater;
 import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
+import io.github.pseudoresonance.pseudoapi.bukkit.messaging.PluginMessenger;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
@@ -27,7 +29,7 @@ import io.github.pseudoresonance.pseudoplayers.listeners.PlayerJoinLeaveL;
 
 public class PseudoPlayers extends PseudoPlugin {
 
-	public static PseudoPlugin plugin;
+	public static PseudoPlayers plugin;
 
 	private static MainCommand mainCommand;
 	private static HelpSC helpSubCommand;
@@ -60,6 +62,8 @@ public class PseudoPlayers extends PseudoPlugin {
 		mainCommand = new MainCommand(plugin);
 		helpSubCommand = new HelpSC(plugin);
 		pingSubCommand = new PingSC();
+		PingSC.setup();
+		PluginMessenger.registerListener(this, pingSubCommand);
 		initializeCommands();
 		initializeTabcompleters();
 		initializeSubCommands();
@@ -71,6 +75,14 @@ public class PseudoPlayers extends PseudoPlugin {
 	@Override
 	public void onDisable() {
 		super.onDisable();
+	}
+	
+	public void doSync(Runnable run) {
+		Bukkit.getScheduler().runTask(this, run);
+	}
+	
+	public void doAsync(Runnable run) {
+		Bukkit.getScheduler().runTaskAsynchronously(this, run);
 	}
 
 	public static Config getConfigOptions() {

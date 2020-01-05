@@ -30,11 +30,11 @@ import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
 import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
-import io.github.pseudoresonance.pseudoapi.bukkit.utils.ChatComponent;
-import io.github.pseudoresonance.pseudoapi.bukkit.utils.ChatComponent.ComponentType;
-import io.github.pseudoresonance.pseudoapi.bukkit.utils.ChatElement;
-import io.github.pseudoresonance.pseudoapi.bukkit.utils.ElementBuilder;
 import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class PlayerSC implements SubCommandExecutor {
 
@@ -235,7 +235,15 @@ public class PlayerSC implements SubCommandExecutor {
 					tpCommand = tpCommand.replaceAll("\\{x\\}", x);
 					tpCommand = tpCommand.replaceAll("\\{y\\}", y);
 					tpCommand = tpCommand.replaceAll("\\{z\\}", z);
-					messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_location") + " "), new ChatElement(Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", world, x, y, z), new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport")))).build());
+					TextComponent locationPrefix = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_location") + " ");
+					Chat.setComponentColors(locationPrefix, Config.descriptionColorArray);
+					TextComponent locationMessage = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", world, x, y, z));
+					Chat.setComponentColors(locationMessage, Config.commandColorArray);
+					locationMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + tpCommand));
+					TextComponent locationHover = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport"));
+					Chat.setComponentColors(locationHover, Config.descriptionColorArray);
+					locationMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {locationHover}));
+					messages.add(new BaseComponent[] {locationPrefix, locationMessage});
 				}
 			} else {
 				if (sender.hasPermission("pseudoplayers.view.logoutlocation")) {
@@ -248,16 +256,26 @@ public class PlayerSC implements SubCommandExecutor {
 								String tpCommand = io.github.pseudoresonance.pseudoplayers.Config.teleportationFormat;
 								World world = PseudoPlayers.plugin.getServer().getWorld(UUID.fromString(split[0]));
 								String worldName = "";
+								TextComponent locationPrefix = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_logout_location") + " ");
+								Chat.setComponentColors(locationPrefix, Config.descriptionColorArray);
 								if (world != null) {
 									worldName = world.getName();
 									tpCommand = tpCommand.replaceAll("\\{world\\}", split[0]);
 									tpCommand = tpCommand.replaceAll("\\{x\\}", split[2]);
 									tpCommand = tpCommand.replaceAll("\\{y\\}", split[3]);
 									tpCommand = tpCommand.replaceAll("\\{z\\}", split[4]);
-									messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_logout_location") + " "), new ChatElement(Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", worldName, split[2], split[3], split[4]), new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport")))).build());
+									TextComponent locationMessage = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", worldName, split[2], split[3], split[4]));
+									Chat.setComponentColors(locationMessage, Config.commandColorArray);
+									locationMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + tpCommand));
+									TextComponent locationHover = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport"));
+									Chat.setComponentColors(locationHover, Config.descriptionColorArray);
+									locationMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {locationHover}));
+									messages.add(new BaseComponent[] {locationPrefix, locationMessage});
 								} else {
 									worldName = split[1];
-									messages.add(new ElementBuilder(new ChatElement(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_logout_location") + " "), new ChatElement(Config.commandColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", worldName, split[2], split[3], split[4]))).build());
+									TextComponent locationMessage = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.location_format", worldName, split[2], split[3], split[4]));
+									Chat.setComponentColors(locationMessage, Config.commandColorArray);
+									messages.add(new BaseComponent[] {locationPrefix, locationMessage});
 								}
 							}
 						}
