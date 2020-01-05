@@ -135,7 +135,7 @@
 		<dependency>
 			<groupId>io.github.pseudoresonance</groupId>
 			<artifactId>PseudoAPI</artifactId>
-			<version>5.0.8</version>
+			<version>5.0.9</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
