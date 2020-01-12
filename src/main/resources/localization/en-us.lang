@@ -5,7 +5,7 @@ pseudoplayers:
   pseudoplayers_help_help: "Shows PseudoPlayers commands"
   pseudoplayers_reload_help: "Reloads PseudoPlayers config"
   pseudoplayers_reloadlocalization_help: "Reloads PseudoPlayers localization"
-  pseudoplayers_reset_help: "Resets PseudoAPI config"
+  pseudoplayers_reset_help: "Resets PseudoPlayers config"
   pseudoplayers_resetlocalization_help: "Resets PseudoPlayers localization"
   pseudoplayers_player_help: "Shows information on a player"
   pseudoplayers_ping_help: "Shows a user's ping"
