@@ -1,10 +1,12 @@
 package io.github.pseudoresonance.pseudoplayers;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
 import io.github.pseudoresonance.pseudoapi.bukkit.CommandDescription;
+import io.github.pseudoresonance.pseudoapi.bukkit.Config;
 import io.github.pseudoresonance.pseudoapi.bukkit.HelpSC;
 import io.github.pseudoresonance.pseudoapi.bukkit.MainCommand;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
@@ -43,6 +45,9 @@ public class PseudoPlayers extends PseudoPlugin {
 	public static Object economy = null;
 	public static Object chat = null;
 	
+	@SuppressWarnings("unused")
+	private static Metrics metrics = null;
+	
 	public void onLoad() {
 		PseudoUpdater.registerPlugin(this);
 	}
@@ -70,11 +75,16 @@ public class PseudoPlayers extends PseudoPlugin {
 		initializeListeners();
 		setCommandDescriptions();
 		PseudoAPI.registerConfig(config);
+		initializeMetrics();
 	}
 
 	@Override
 	public void onDisable() {
 		super.onDisable();
+	}
+	
+	private void initializeMetrics() {
+		metrics = new Metrics(this);
 	}
 	
 	public void doSync(Runnable run) {
