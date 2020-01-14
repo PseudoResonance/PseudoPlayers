@@ -20,12 +20,22 @@ commands:
     permission: pseudoplayers.nickname
     aliases: [nick,name]
 permissions:
-  pseudoplayers.reset:
-    description: Allows the player to reset the config
-    default: op
   pseudoplayers.reload:
     description: Allows the player to reload the plugin
     default: op
+  pseudoplayers.reset:
+    description: Allows the player to reset the config
+    default: op
+    children:
+      pseudoplayers.reload: true
+  pseudoplayers.reloadlocalization:
+    description: Allows the player to reload the localization
+    default: op
+  pseudoplayers.resetlocalization:
+    description: Allows the player to reset the localization
+    default: op
+    children:
+      pseudoplayers.reloadlocalization: true
   pseudoplayers.ping:
     description: Allows the player to view their ping
     default: true
@@ -165,7 +175,7 @@ permissions:
     default: op
     children:
       pseudoplayers.reset: true
-      pseudoplayers.reload: true
+      pseudoplayers.resetlocalization: true
       pseudoplayers.ping.others: true
       pseudoplayers.view.others: true
       pseudoplayers.view.uuid: true
