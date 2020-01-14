@@ -14,25 +14,7 @@ import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 public class ResetSC implements SubCommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player) {
-			if (sender.hasPermission("pseudoplayers.reset")) {
-				try {
-					File conf = new File(PseudoPlayers.plugin.getDataFolder(), "config.yml");
-					conf.delete();
-					PseudoPlayers.plugin.saveDefaultConfig();
-					PseudoPlayers.plugin.reloadConfig();
-				} catch (Exception e) {
-					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.GENERIC);
-					return false;
-				}
-				PseudoPlayers.getConfigOptions().reloadConfig();
-				PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoapi.config_reset"));
-				return true;
-			} else {
-				PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoapi.permission_reset_config"));
-				return false;
-			}
-		} else {
+		if (!(sender instanceof Player) || sender.hasPermission("pseudoplayers.reset")) {
 			try {
 				File conf = new File(PseudoPlayers.plugin.getDataFolder(), "config.yml");
 				conf.delete();
@@ -45,6 +27,9 @@ public class ResetSC implements SubCommandExecutor {
 			PseudoPlayers.getConfigOptions().reloadConfig();
 			PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoapi.config_reset"));
 			return true;
+		} else {
+			PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoapi.permission_reset_config"));
+			return false;
 		}
 	}
 
