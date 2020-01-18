@@ -20,6 +20,7 @@ import com.google.common.io.ByteStreams;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
 import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
+import io.github.pseudoresonance.pseudoapi.bukkit.Config;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
 import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
@@ -57,9 +58,9 @@ public class PingSC implements SubCommandExecutor, PluginMessengerListener {
 										if (entry.getValue().requestingPlayer.toString().equals(entry.getValue().requestedPlayer))
 											PseudoAPI.plugin.getChat().sendPluginMessage(p, LanguageManager.getLanguage(p).getMessage("pseudoplayers.your_ping", entry.getValue().spigotPing));
 										else
-											PseudoAPI.plugin.getChat().sendPluginMessage(p, LanguageManager.getLanguage(p).getMessage("pseudoplayers.players_ping", entry.getValue().requestedName, entry.getValue().spigotPing));
+											PseudoAPI.plugin.getChat().sendPluginMessage(p, LanguageManager.getLanguage(p).getMessage("pseudoplayers.players_ping", entry.getValue().requestedName + Config.textColor, entry.getValue().spigotPing));
 								} else
-									PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.players_ping", entry.getValue().requestedName, entry.getValue().spigotPing));
+									PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.players_ping", entry.getValue().requestedName + Config.textColor, entry.getValue().spigotPing));
 							});
 						}
 					}
@@ -84,11 +85,11 @@ public class PingSC implements SubCommandExecutor, PluginMessengerListener {
 					Player pl = Bukkit.getPlayer(req.requestingPlayer);
 					if (pl != null)
 						if (req.requestingPlayer.toString().equals(req.requestedPlayer))
-							PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.your_ping", ping));
+							PseudoAPI.plugin.getChat().sendPluginMessage(pl, LanguageManager.getLanguage(pl).getMessage("pseudoplayers.your_ping", ping));
 						else
-							PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.players_ping", req.requestedName, ping));
+							PseudoAPI.plugin.getChat().sendPluginMessage(pl, LanguageManager.getLanguage(pl).getMessage("pseudoplayers.players_ping", req.requestedName + Config.textColor, ping));
 				} else
-					PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.players_ping", req.requestedName, ping));
+					PseudoAPI.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.players_ping", req.requestedName + Config.textColor, ping));
 			}
 		}
 	}
