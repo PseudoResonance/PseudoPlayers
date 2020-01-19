@@ -15,6 +15,13 @@ commands:
   ping:
     description: Shows player ping
     permission: pseudoplayers.ping
+  playtime:
+    description: Shows player playtime
+    permission: pseudoplayers.playtime
+    aliases: [pt]
+  playtop:
+    description: Shows playtime leaderboard
+    permission: pseudoplayers.playtop
   nickname:
     description: Changes player nicknames
     permission: pseudoplayers.nickname
@@ -44,6 +51,17 @@ permissions:
     default: op
     children:
       pseudoplayers.ping: true
+  pseudoplayers.playtime:
+    description: Allows the player to view their playtime
+    default: true
+  pseudoplayers.playtime.others:
+    description: Allows the player to view the playtime of other players
+    default: true
+    children:
+      pseudoplayers.playtime: true
+  pseudoplayers.playtop:
+    description: Allows the player to view the playtime leaderboards
+    default: true
   pseudoplayers.nickname:
     description: Allows the player to use the nickname command
     default: op
@@ -127,7 +145,7 @@ permissions:
       pseudoplayers.view: true
   pseudoplayers.view.playtime:
     description: Allows the player to see how long a player has played
-    default: op
+    default: true
     children:
       pseudoplayers.view: true
   pseudoplayers.view.balance:
@@ -177,6 +195,8 @@ permissions:
       pseudoplayers.reset: true
       pseudoplayers.resetlocalization: true
       pseudoplayers.ping.others: true
+      pseudoplayers.playtime.others: true
+      pseudoplayers.playtop: true
       pseudoplayers.view.others: true
       pseudoplayers.view.uuid: true
       pseudoplayers.view.location: true

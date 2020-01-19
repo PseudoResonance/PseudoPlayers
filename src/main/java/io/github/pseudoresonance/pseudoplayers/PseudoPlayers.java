@@ -23,6 +23,8 @@ import io.github.pseudoresonance.pseudoplayers.commands.ResetSC;
 import io.github.pseudoresonance.pseudoplayers.commands.NicknameSC;
 import io.github.pseudoresonance.pseudoplayers.commands.PingSC;
 import io.github.pseudoresonance.pseudoplayers.commands.PlayerSC;
+import io.github.pseudoresonance.pseudoplayers.commands.PlaytimeSC;
+import io.github.pseudoresonance.pseudoplayers.commands.PlaytopSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ReloadLocalizationSC;
 import io.github.pseudoresonance.pseudoplayers.completers.NicknameTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PlayerTC;
@@ -127,6 +129,8 @@ public class PseudoPlayers extends PseudoPlugin {
 		this.getCommand("pseudoplayers").setExecutor(mainCommand);
 		this.getCommand("player").setExecutor(playerSubCommand);
 		this.getCommand("ping").setExecutor(pingSubCommand);
+		this.getCommand("playtime").setExecutor(new PlaytimeSC());
+		this.getCommand("playtop").setExecutor(new PlaytopSC());
 		this.getCommand("nickname").setExecutor(new NicknameSC());
 	}
 	
@@ -144,8 +148,6 @@ public class PseudoPlayers extends PseudoPlugin {
 		subCommands.put("reloadlocalization", new ReloadLocalizationSC());
 		subCommands.put("reset", new ResetSC());
 		subCommands.put("resetlocalization", new ResetLocalizationSC());
-		subCommands.put("player", playerSubCommand);
-		subCommands.put("ping", pingSubCommand);
 	}
 
 	private void initializeTabcompleters() {
@@ -168,6 +170,8 @@ public class PseudoPlayers extends PseudoPlugin {
 		commandDescriptions.add(new CommandDescription("nickname", "pseudoplayers.pseudoplayers_nickname_help", "pseudoplayers.nickname", false));
 		commandDescriptions.add(new CommandDescription("ping", "pseudoplayers.pseudoplayers_ping_help", "pseudoplayers.ping"));
 		commandDescriptions.add(new CommandDescription("player", "pseudoplayers.pseudoplayers_player_help", "pseudoplayers.view"));
+		commandDescriptions.add(new CommandDescription("playtime", "pseudoplayers.pseudoplayers_playtime_help", "pseudoplayers.playtime"));
+		commandDescriptions.add(new CommandDescription("playtop", "pseudoplayers.pseudoplayers_playtop_help", "pseudoplayers.playtop"));
 	}
 
 }
