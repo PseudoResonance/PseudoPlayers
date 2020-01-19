@@ -7,7 +7,7 @@
 	<version>${revision}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<revision>1.4.7</revision>
+		<revision>1.4.8</revision>
 		<lowerName>pseudoplayers</lowerName>
 	</properties>
 	<build>
