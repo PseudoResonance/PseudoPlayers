@@ -45,18 +45,19 @@ public class PlaytopSC implements SubCommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player) || sender.hasPermission("pseudoplayers.playtop")) {
-			PseudoPlayers.plugin.doAsync(() -> {
-				Backend b = Data.getGlobalBackend();
-				int page = 1;
-				if (args.length > 0) {
-					try {
-						page = Integer.valueOf(args[0]);
-					} catch (NumberFormatException e) {
-						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NOT_A_NUMBER, args[0]);
-						return;
-					}
+			Backend b = Data.getGlobalBackend();
+			final int page;
+			if (args.length > 0) {
+				try {
+					page = Integer.valueOf(args[0]);
+				} catch (NumberFormatException e) {
+					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NOT_A_NUMBER, args[0]);
+					return false;
 				}
-				if (System.currentTimeMillis() - lastCache > CACHE_EXPIRY) {
+			} else
+				page = 1;
+			if (System.currentTimeMillis() - lastCache > CACHE_EXPIRY) {
+				PseudoPlayers.plugin.doAsync(() -> {
 					if (b instanceof FileBackend) {
 						FileBackend fb = (FileBackend) b;
 						File folder = new File(fb.getFolder(), "Players");
@@ -157,26 +158,49 @@ public class PlaytopSC implements SubCommandExecutor {
 						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_getting_playtop"));
 						return;
 					}
-				}
+					int total = (playtimeCache.size() - 1) / 10 + 1;
+					int usrPage = page;
+					if (usrPage > total || usrPage <= 0) {
+						usrPage = 1;
+					}
+					ArrayList<String> messages = new ArrayList<String>();
+					messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.playtop_page") + Config.borderColor + "---===");
+					Iterator<Entry<String, Long>> iter = playtimeCache.entrySet().iterator();
+					for (int i = 0; i < (usrPage - 1) * 10; i++)
+						iter.next();
+					for (int i = 1; i <= 10; i++) {
+						if (iter.hasNext()) {
+							Entry<String, Long> entry = iter.next();
+							messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.playtop_entry", (usrPage - 1) * 10 + i, entry.getKey() + Config.descriptionColor, Config.commandColor + LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - entry.getValue()), false, ChronoUnit.SECONDS, ChronoUnit.YEARS) + Config.descriptionColor));
+						} else
+							break;
+					}
+					messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoapi.page_number", usrPage, total) + Config.borderColor + "---===");
+					Chat.sendMessage(sender, messages);
+				});
+				return true;
+			} else {
 				int total = (playtimeCache.size() - 1) / 10 + 1;
-				if (page > total || page <= 0) {
-					page = 1;
+				int usrPage = page;
+				if (usrPage > total || usrPage <= 0) {
+					usrPage = 1;
 				}
 				ArrayList<String> messages = new ArrayList<String>();
 				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.playtop_page") + Config.borderColor + "---===");
 				Iterator<Entry<String, Long>> iter = playtimeCache.entrySet().iterator();
-				for (int i = 0; i < (page - 1) * 10; i++)
+				for (int i = 0; i < (usrPage - 1) * 10; i++)
 					iter.next();
 				for (int i = 1; i <= 10; i++) {
 					if (iter.hasNext()) {
 						Entry<String, Long> entry = iter.next();
-						messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.playtop_entry", (page - 1) * 10 + i, entry.getKey() + Config.descriptionColor, Config.commandColor + LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - entry.getValue()), false, ChronoUnit.SECONDS, ChronoUnit.YEARS) + Config.descriptionColor));
+						messages.add(Config.descriptionColor + LanguageManager.getLanguage(sender).getMessage("pseudoplayers.playtop_entry", (usrPage - 1) * 10 + i, entry.getKey() + Config.descriptionColor, Config.commandColor + LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - entry.getValue()), false, ChronoUnit.SECONDS, ChronoUnit.YEARS) + Config.descriptionColor));
 					} else
 						break;
 				}
-				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoapi.page_number", page, total) + Config.borderColor + "---===");
+				messages.add(Config.borderColor + "===---" + Config.titleColor + LanguageManager.getLanguage(sender).getMessage("pseudoapi.page_number", usrPage, total) + Config.borderColor + "---===");
 				Chat.sendMessage(sender, messages);
-			});
+				return true;
+			}
 		} else
 			PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_playtop"));
 		return false;

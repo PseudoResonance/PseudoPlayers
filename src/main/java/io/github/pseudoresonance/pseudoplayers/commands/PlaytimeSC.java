@@ -39,90 +39,91 @@ public class PlaytimeSC implements SubCommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player) || sender.hasPermission("pseudoplayers.playtime")) {
-			PseudoPlayers.plugin.doAsync(() -> {
 				Backend b = Data.getGlobalBackend();
 				if (args.length == 0) {
 					if (System.currentTimeMillis() - lastCache <= CACHE_EXPIRY) {
 						PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.server_playtime", LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtimeCache), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
-						return;
+						return true;
 					}
-					if (b instanceof FileBackend) {
-						long playtime = 0;
-						FileBackend fb = (FileBackend) b;
-						File folder = new File(fb.getFolder(), "Players");
-						try {
-							for (File f : folder.listFiles()) {
-								if (f.isFile() && f.getName().endsWith(".yml")) {
-									String uuid = f.getName().substring(0, f.getName().length() - 4);
-									Player p = Bukkit.getPlayer(UUID.fromString(uuid));
-									YamlConfiguration c = YamlConfiguration.loadConfiguration(f);
-									Object o = c.get("playtime");
-									if (o instanceof BigInteger || o instanceof Long || o instanceof Integer) {
-										if (o instanceof BigInteger)
-											playtime += ((BigInteger) o).longValueExact();
-										else if (o instanceof Long)
-											playtime += (Long) o;
-										else
-											playtime += (Integer) o;
-										if (p != null) {
-											Object jl = c.get("lastjoinleave");
-											Timestamp joinLeaveTS = null;
-											if (jl instanceof Date) {
-												joinLeaveTS = new Timestamp(((Date) jl).getTime());
-											}
-											if (joinLeaveTS != null) {
-												long joinLeave = joinLeaveTS.getTime();
-												long diff = System.currentTimeMillis() - joinLeave;
-												playtime += diff;
+					PseudoPlayers.plugin.doAsync(() -> {
+						if (b instanceof FileBackend) {
+							long playtime = 0;
+							FileBackend fb = (FileBackend) b;
+							File folder = new File(fb.getFolder(), "Players");
+							try {
+								for (File f : folder.listFiles()) {
+									if (f.isFile() && f.getName().endsWith(".yml")) {
+										String uuid = f.getName().substring(0, f.getName().length() - 4);
+										Player p = Bukkit.getPlayer(UUID.fromString(uuid));
+										YamlConfiguration c = YamlConfiguration.loadConfiguration(f);
+										Object o = c.get("playtime");
+										if (o instanceof BigInteger || o instanceof Long || o instanceof Integer) {
+											if (o instanceof BigInteger)
+												playtime += ((BigInteger) o).longValueExact();
+											else if (o instanceof Long)
+												playtime += (Long) o;
+											else
+												playtime += (Integer) o;
+											if (p != null) {
+												Object jl = c.get("lastjoinleave");
+												Timestamp joinLeaveTS = null;
+												if (jl instanceof Date) {
+													joinLeaveTS = new Timestamp(((Date) jl).getTime());
+												}
+												if (joinLeaveTS != null) {
+													long joinLeave = joinLeaveTS.getTime();
+													long diff = System.currentTimeMillis() - joinLeave;
+													playtime += diff;
+												}
 											}
 										}
 									}
 								}
+							} catch (SecurityException e) {
+								PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "No permission to access: " + folder.getAbsolutePath());
 							}
-						} catch (SecurityException e) {
-							PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "No permission to access: " + folder.getAbsolutePath());
-						}
-						playtimeCache = playtime;
-						lastCache = System.currentTimeMillis();
-						PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.server_playtime", LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
-						return;
-					} else if (b instanceof SQLBackend) {
-						SQLBackend sb = (SQLBackend) b;
-						BasicDataSource data = sb.getDataSource();
-						try (Connection c = data.getConnection()) {
-							try (PreparedStatement ps = c.prepareStatement("SELECT CAST(SUM(IF (online=1, TIMESTAMPDIFF(MICROSECOND, LASTJOINLEAVE, NOW()), 0)/1000 + playtime) AS UNSIGNED) AS totaltime FROM `" + sb.getPrefix() + "Players`;")) {
-								try (ResultSet rs = ps.executeQuery()) {
-									if (rs.next()) {
-										Object o = rs.getObject(1);
-										long playtime = 0;
-										if (o instanceof BigInteger || o instanceof Long || o instanceof Integer) {
-											if (o instanceof BigInteger)
-												playtime = ((BigInteger) o).longValueExact();
-											else if (o instanceof Long)
-												playtime = (Long) o;
-											else
-												playtime = (Integer) o;
+							playtimeCache = playtime;
+							lastCache = System.currentTimeMillis();
+							PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.server_playtime", LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
+							return;
+						} else if (b instanceof SQLBackend) {
+							SQLBackend sb = (SQLBackend) b;
+							BasicDataSource data = sb.getDataSource();
+							try (Connection c = data.getConnection()) {
+								try (PreparedStatement ps = c.prepareStatement("SELECT CAST(SUM(IF (online=1, TIMESTAMPDIFF(MICROSECOND, LASTJOINLEAVE, NOW()), 0)/1000 + playtime) AS UNSIGNED) AS totaltime FROM `" + sb.getPrefix() + "Players`;")) {
+									try (ResultSet rs = ps.executeQuery()) {
+										if (rs.next()) {
+											Object o = rs.getObject(1);
+											long playtime = 0;
+											if (o instanceof BigInteger || o instanceof Long || o instanceof Integer) {
+												if (o instanceof BigInteger)
+													playtime = ((BigInteger) o).longValueExact();
+												else if (o instanceof Long)
+													playtime = (Long) o;
+												else
+													playtime = (Integer) o;
+											}
+											playtimeCache = playtime;
+											lastCache = System.currentTimeMillis();
+											PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.server_playtime", LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
+											return;
 										}
-										playtimeCache = playtime;
-										lastCache = System.currentTimeMillis();
-										PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.server_playtime", LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
-										return;
+									} catch (SQLException e) {
+										PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "Error when getting total playtime from table: " + sb.getPrefix() + "Players in database: " + sb.getName());
+										PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "SQLError " + e.getErrorCode() + ": (State: " + e.getSQLState() + ") - " + e.getMessage());
 									}
 								} catch (SQLException e) {
-									PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "Error when getting total playtime from table: " + sb.getPrefix() + "Players in database: " + sb.getName());
+									PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "Error when preparing statement in database: " + sb.getName());
 									PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "SQLError " + e.getErrorCode() + ": (State: " + e.getSQLState() + ") - " + e.getMessage());
 								}
 							} catch (SQLException e) {
-								PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "Error when preparing statement in database: " + sb.getName());
+								PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "Error while accessing database: " + sb.getName());
 								PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "SQLError " + e.getErrorCode() + ": (State: " + e.getSQLState() + ") - " + e.getMessage());
 							}
-						} catch (SQLException e) {
-							PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "Error while accessing database: " + sb.getName());
-							PseudoPlayers.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, "SQLError " + e.getErrorCode() + ": (State: " + e.getSQLState() + ") - " + e.getMessage());
 						}
-					}
-					PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_getting_total_playtime"));
-					return;
+						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.error_getting_total_playtime"));
+						return;
+					});
 				} else {
 					boolean online = false;
 					String uuid;
@@ -138,7 +139,7 @@ public class PlaytimeSC implements SubCommandExecutor {
 									uuid = pUuid;
 								else {
 									PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_playtime_others"));
-									return;
+									return false;
 								}
 							}
 						} else {
@@ -146,7 +147,7 @@ public class PlaytimeSC implements SubCommandExecutor {
 						}
 					} else {
 						PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NEVER_JOINED, args[0]);
-						return;
+						return false;
 					}
 					Player player = Bukkit.getServer().getPlayer(name);
 					if (player != null) {
@@ -193,9 +194,8 @@ public class PlaytimeSC implements SubCommandExecutor {
 						}
 					}
 					PseudoPlayers.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.player_playtime_specific", name + Config.textColor, LanguageManager.getLanguage(sender).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS)));
-					return;
+					return true;
 				}
-			});
 			return false;
 		} else {
 			PseudoPlayers.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoplayers.permission_playtime"));
