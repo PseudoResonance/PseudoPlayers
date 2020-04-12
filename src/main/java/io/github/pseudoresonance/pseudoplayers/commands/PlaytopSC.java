@@ -18,7 +18,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.dbcp2.BasicDataSource;
+import javax.sql.DataSource;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -116,7 +117,7 @@ public class PlaytopSC implements SubCommandExecutor {
 						}
 					} else if (b instanceof SQLBackend) {
 						SQLBackend sb = (SQLBackend) b;
-						BasicDataSource data = sb.getDataSource();
+						DataSource data = sb.getDataSource();
 						try (Connection c = data.getConnection()) {
 							try (PreparedStatement ps = c.prepareStatement("SELECT IFNULL(nickname, username) AS 'name',CAST((IF (online=1, TIMESTAMPDIFF(MICROSECOND, LASTJOINLEAVE, NOW()), 0)/1000 + playtime) AS UNSIGNED) AS onlinetime FROM `" + sb.getPrefix() + "Players` ORDER BY onlinetime DESC;")) {
 								try (ResultSet rs = ps.executeQuery()) {

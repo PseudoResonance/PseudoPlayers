@@ -11,7 +11,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.commons.dbcp2.BasicDataSource;
+import javax.sql.DataSource;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -88,7 +89,7 @@ public class PlaytimeSC implements SubCommandExecutor {
 							return;
 						} else if (b instanceof SQLBackend) {
 							SQLBackend sb = (SQLBackend) b;
-							BasicDataSource data = sb.getDataSource();
+							DataSource data = sb.getDataSource();
 							try (Connection c = data.getConnection()) {
 								try (PreparedStatement ps = c.prepareStatement("SELECT CAST(SUM(IF (online=1, TIMESTAMPDIFF(MICROSECOND, LASTJOINLEAVE, NOW()), 0)/1000 + playtime) AS UNSIGNED) AS totaltime FROM `" + sb.getPrefix() + "Players`;")) {
 									try (ResultSet rs = ps.executeQuery()) {
