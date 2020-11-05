@@ -82,3 +82,5 @@ pseudoplayers:
   permission_view_player_details_others: "view other players' details"
   permission_playtime: "view your playtime"
   permission_playtime_others: "view other players' playtimes"
+  placeholder_unknown: "Unknown"
+  placeholder_not_player: "Not a player"

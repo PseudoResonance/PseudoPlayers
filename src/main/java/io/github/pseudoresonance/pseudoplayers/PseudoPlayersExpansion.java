@@ -71,10 +71,10 @@ public class PseudoPlayersExpansion extends PlaceholderExpansion {
 						firstJoinTime = LanguageManager.getLanguage(player).formatTimeAgo(firstJoinTS, ChronoUnit.SECONDS, ChronoUnit.DAYS);
 					}
 				} else
-					firstJoinTime = LanguageManager.getLanguage(player).getMessage("pseudoplaceholders.unknown");
+					firstJoinTime = LanguageManager.getLanguage(player).getMessage("pseudoplayers.placeholder_unknown");
 				return firstJoinTime;
 			} else {
-				return LanguageManager.getLanguage(player).getMessage("pseudoplaceholders.not_player");
+				return LanguageManager.getLanguage(player).getMessage("pseudoplayers.placeholder_not_player");
 			}
 		case "online_since":
 			if (player != null) {
@@ -96,10 +96,10 @@ public class PseudoPlayersExpansion extends PlaceholderExpansion {
 						joinLeaveTime = LanguageManager.getLanguage(player).formatTimeAgo(joinLeaveTS, false, ChronoUnit.SECONDS, ChronoUnit.DAYS);
 					}
 				} else
-					joinLeaveTime = LanguageManager.getLanguage(player).getMessage("pseudoplaceholders.unknown");
+					joinLeaveTime = LanguageManager.getLanguage(player).getMessage("pseudoplayers.placeholder_unknown");
 				return joinLeaveTime;
 			} else {
-				return LanguageManager.getLanguage(player).getMessage("pseudoplaceholders.not_player");
+				return LanguageManager.getLanguage(player).getMessage("pseudoplayers.placeholder_not_player");
 			}
 		case "playtime":
 			if (player != null) {
@@ -127,9 +127,9 @@ public class PseudoPlayersExpansion extends PlaceholderExpansion {
 					}
 					return LanguageManager.getLanguage(player).formatTimeAgo(new Timestamp(System.currentTimeMillis() - playtime), false, ChronoUnit.SECONDS, ChronoUnit.YEARS);
 				}
-				return LanguageManager.getLanguage(player).getMessage("pseudoplaceholders.unknown");
+				return LanguageManager.getLanguage(player).getMessage("pseudoplayers.placeholder_unknown");
 			} else {
-				return LanguageManager.getLanguage(player).getMessage("pseudoplaceholders.not_player");
+				return LanguageManager.getLanguage(player).getMessage("pseudoplayers.placeholder_not_player");
 			}
 		default:
 			return "";
