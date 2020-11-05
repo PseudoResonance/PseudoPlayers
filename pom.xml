@@ -7,7 +7,7 @@
 	<version>${revision}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<revision>1.4.10</revision>
+		<revision>1.4.11</revision>
 		<lowerName>pseudoplayers</lowerName>
 	</properties>
 	<build>
@@ -147,24 +147,34 @@
 			<id>CodeMC</id>
 			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
+		<repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.15.1-R0.1-SNAPSHOT</version>
+			<version>1.16.4-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.github.pseudoresonance</groupId>
 			<artifactId>PseudoAPI</artifactId>
-			<version>5.2.7</version>
-			<scope>compile</scope>
+			<version>5.2.12</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>1.5</version>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.10.9</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

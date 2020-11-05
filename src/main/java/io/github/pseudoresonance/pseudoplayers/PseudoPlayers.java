@@ -17,6 +17,7 @@ import io.github.pseudoresonance.pseudoapi.bukkit.messaging.PluginMessenger;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
+import io.github.pseudoresonance.pseudomusic.PseudoMusicExpansion;
 import io.github.pseudoresonance.pseudoplayers.commands.ReloadSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ResetLocalizationSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ResetSC;
@@ -78,6 +79,8 @@ public class PseudoPlayers extends PseudoPlugin {
 		setCommandDescriptions();
 		PseudoAPI.registerConfig(config);
 		initializeMetrics();
+		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+			new PseudoPlayersExpansion(this).register();
 	}
 
 	@Override
@@ -86,7 +89,7 @@ public class PseudoPlayers extends PseudoPlugin {
 	}
 	
 	private void initializeMetrics() {
-		metrics = new Metrics(this);
+		metrics = new Metrics(this, 6255);
 	}
 	
 	public void doSync(Runnable run) {
