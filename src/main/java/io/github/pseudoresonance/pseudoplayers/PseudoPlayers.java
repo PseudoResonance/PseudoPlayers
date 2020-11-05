@@ -17,7 +17,6 @@ import io.github.pseudoresonance.pseudoapi.bukkit.messaging.PluginMessenger;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.ServerPlayerDataController;
-import io.github.pseudoresonance.pseudomusic.PseudoMusicExpansion;
 import io.github.pseudoresonance.pseudoplayers.commands.ReloadSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ResetLocalizationSC;
 import io.github.pseudoresonance.pseudoplayers.commands.ResetSC;

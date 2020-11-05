@@ -35,6 +35,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class PlayerSC implements SubCommandExecutor {
 
@@ -242,7 +243,7 @@ public class PlayerSC implements SubCommandExecutor {
 					locationMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + tpCommand));
 					TextComponent locationHover = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport"));
 					Chat.setComponentColors(locationHover, Config.descriptionColorArray);
-					locationMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {locationHover}));
+					locationMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new BaseComponent[] {locationHover})));
 					messages.add(new BaseComponent[] {locationPrefix, locationMessage});
 				}
 			} else {
@@ -269,7 +270,7 @@ public class PlayerSC implements SubCommandExecutor {
 									locationMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + tpCommand));
 									TextComponent locationHover = new TextComponent(LanguageManager.getLanguage(sender).getMessage("pseudoplayers.click_to_teleport"));
 									Chat.setComponentColors(locationHover, Config.descriptionColorArray);
-									locationMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {locationHover}));
+									locationMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new BaseComponent[] {locationHover})));
 									messages.add(new BaseComponent[] {locationPrefix, locationMessage});
 								} else {
 									worldName = split[1];
